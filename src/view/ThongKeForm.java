@@ -34,8 +34,6 @@ public class ThongKeForm extends javax.swing.JFrame {
         jScrollPane4 = new javax.swing.JScrollPane();
         tblThongKeProduct = new javax.swing.JTable();
         jPanel13 = new javax.swing.JPanel();
-        jDateChooserFromPr = new com.toedter.calendar.JDateChooser();
-        jDateChooserToPr = new com.toedter.calendar.JDateChooser();
         jLabel6 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         btnResetThongKePr = new javax.swing.JButton();
@@ -49,8 +47,6 @@ public class ThongKeForm extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPhieuNhap = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
-        jDateChooserFrom = new com.toedter.calendar.JDateChooser();
-        jDateChooserTo = new com.toedter.calendar.JDateChooser();
         jLabel1 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -119,32 +115,6 @@ public class ThongKeForm extends javax.swing.JFrame {
         jPanel13.setBackground(new java.awt.Color(255, 255, 255));
         jPanel13.setBorder(javax.swing.BorderFactory.createTitledBorder("Lọc theo ngày"));
         jPanel13.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jDateChooserFromPr.setBackground(new java.awt.Color(255, 255, 255));
-        jDateChooserFromPr.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                jDateChooserFromPrPropertyChange(evt);
-            }
-        });
-        jDateChooserFromPr.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                jDateChooserFromPrKeyReleased(evt);
-            }
-        });
-        jPanel13.add(jDateChooserFromPr, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 40, 170, -1));
-
-        jDateChooserToPr.setBackground(new java.awt.Color(255, 255, 255));
-        jDateChooserToPr.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                jDateChooserToPrPropertyChange(evt);
-            }
-        });
-        jDateChooserToPr.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                jDateChooserToPrKeyReleased(evt);
-            }
-        });
-        jPanel13.add(jDateChooserToPr, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 40, 170, -1));
 
         jLabel6.setText("Đến");
         jPanel13.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 40, 40, 20));
@@ -272,32 +242,6 @@ public class ThongKeForm extends javax.swing.JFrame {
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Lọc theo ngày"));
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jDateChooserFrom.setBackground(new java.awt.Color(255, 255, 255));
-        jDateChooserFrom.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                jDateChooserFromPropertyChange(evt);
-            }
-        });
-        jDateChooserFrom.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                jDateChooserFromKeyReleased(evt);
-            }
-        });
-        jPanel4.add(jDateChooserFrom, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 30, 170, -1));
-
-        jDateChooserTo.setBackground(new java.awt.Color(255, 255, 255));
-        jDateChooserTo.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                jDateChooserToPropertyChange(evt);
-            }
-        });
-        jDateChooserTo.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                jDateChooserToKeyReleased(evt);
-            }
-        });
-        jPanel4.add(jDateChooserTo, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 30, 170, -1));
-
         jLabel1.setText("Đến");
         jPanel4.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 30, 40, 20));
 
@@ -389,7 +333,7 @@ public class ThongKeForm extends javax.swing.JFrame {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE))
+                                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(18, 18, 18)
@@ -489,7 +433,7 @@ public class ThongKeForm extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1163, Short.MAX_VALUE))
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -550,7 +494,7 @@ public class ThongKeForm extends javax.swing.JFrame {
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
-                .addContainerGap(12, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel12)
                     .addGroup(jPanel9Layout.createSequentialGroup()
@@ -660,7 +604,7 @@ public class ThongKeForm extends javax.swing.JFrame {
                     .addComponent(jPanel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -862,10 +806,6 @@ public class ThongKeForm extends javax.swing.JFrame {
     private javax.swing.JButton jButton7;
     private javax.swing.JComboBox<String> jComboBoxLuaChon;
     private javax.swing.JComboBox<String> jComboBoxLuaChon1;
-    private com.toedter.calendar.JDateChooser jDateChooserFrom;
-    private com.toedter.calendar.JDateChooser jDateChooserFromPr;
-    private com.toedter.calendar.JDateChooser jDateChooserTo;
-    private com.toedter.calendar.JDateChooser jDateChooserToPr;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
