@@ -46,6 +46,20 @@ public class NhaCungCap extends javax.swing.JInternalFrame {
         btnReset = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblNCC = new javax.swing.JTable();
+        jInternalFrame1 = new javax.swing.JInternalFrame();
+        jToolBar2 = new javax.swing.JToolBar();
+        btnAdd1 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JToolBar.Separator();
+        exportExcel1 = new javax.swing.JButton();
+        importExcel1 = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        cbxlLuaChon1 = new javax.swing.JComboBox<>();
+        txtSearchForm1 = new javax.swing.JTextField();
+        btnReset1 = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblNCC1 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1080, 660));
@@ -170,25 +184,179 @@ public class NhaCungCap extends javax.swing.JInternalFrame {
         ));
         jScrollPane1.setViewportView(tblNCC);
 
+        jInternalFrame1.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        jInternalFrame1.setPreferredSize(new java.awt.Dimension(1080, 660));
+
+        jToolBar2.setBackground(new java.awt.Color(255, 255, 255));
+        jToolBar2.setBorder(javax.swing.BorderFactory.createTitledBorder("Chức năng"));
+        jToolBar2.setRollover(true);
+
+        btnAdd1.setFont(new java.awt.Font("SF Pro Display", 0, 15)); // NOI18N
+        btnAdd1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_add_40px.png"))); // NOI18N
+        btnAdd1.setText("Thêm");
+        btnAdd1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        btnAdd1.setFocusable(false);
+        btnAdd1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnAdd1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnAdd1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdd1ActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(btnAdd1);
+
+        jButton6.setFont(new java.awt.Font("SF Pro Display", 0, 15)); // NOI18N
+        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_delete_40px.png"))); // NOI18N
+        jButton6.setText("Xoá");
+        jButton6.setFocusable(false);
+        jButton6.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton6.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(jButton6);
+
+        jButton7.setFont(new java.awt.Font("SF Pro Display", 0, 15)); // NOI18N
+        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_edit_40px.png"))); // NOI18N
+        jButton7.setText("Sửa");
+        jButton7.setFocusable(false);
+        jButton7.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton7.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(jButton7);
+        jToolBar2.add(jSeparator2);
+
+        exportExcel1.setFont(new java.awt.Font("SF Pro Display", 0, 15)); // NOI18N
+        exportExcel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_spreadsheet_file_40px.png"))); // NOI18N
+        exportExcel1.setText("Xuất Excel");
+        exportExcel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        exportExcel1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        exportExcel1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportExcel1ActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(exportExcel1);
+
+        importExcel1.setFont(new java.awt.Font("SF Pro Display", 0, 15)); // NOI18N
+        importExcel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_xls_40px.png"))); // NOI18N
+        importExcel1.setText("Nhập Excel");
+        importExcel1.setFocusable(false);
+        importExcel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        importExcel1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        importExcel1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importExcel1ActionPerformed(evt);
+            }
+        });
+        jToolBar2.add(importExcel1);
+
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm kiếm"));
+        jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        cbxlLuaChon1.setFont(new java.awt.Font("SF Pro Display", 0, 15)); // NOI18N
+        cbxlLuaChon1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Tất cả", "Mã nhà cung cấp", "Tên nhà cung cấp", "Số điện thoại", "Địa chỉ" }));
+        jPanel4.add(cbxlLuaChon1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, 150, 40));
+
+        txtSearchForm1.setFont(new java.awt.Font("SF Pro Display", 0, 15)); // NOI18N
+        txtSearchForm1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSearchForm1ActionPerformed(evt);
+            }
+        });
+        txtSearchForm1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtSearchForm1KeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchForm1KeyReleased(evt);
+            }
+        });
+        jPanel4.add(txtSearchForm1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 30, 610, 40));
+
+        btnReset1.setFont(new java.awt.Font("SF Pro Display", 0, 15)); // NOI18N
+        btnReset1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_reset_25px_1.png"))); // NOI18N
+        btnReset1.setText("Làm mới");
+        btnReset1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReset1ActionPerformed(evt);
+            }
+        });
+        jPanel4.add(btnReset1, new org.netbeans.lib.awtextra.AbsoluteConstraints(820, 30, 120, 40));
+
+        jScrollPane2.setBorder(null);
+
+        tblNCC1.setFont(new java.awt.Font("SF Pro Display", 0, 15)); // NOI18N
+        tblNCC1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Mã NCC", "Tên nhà cung cấp", "Số điện thoại", "Địa chỉ"
+            }
+        ));
+        jScrollPane2.setViewportView(tblNCC1);
+
+        javax.swing.GroupLayout jInternalFrame1Layout = new javax.swing.GroupLayout(jInternalFrame1.getContentPane());
+        jInternalFrame1.getContentPane().setLayout(jInternalFrame1Layout);
+        jInternalFrame1Layout.setHorizontalGroup(
+            jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jInternalFrame1Layout.createSequentialGroup()
+                .addComponent(jToolBar2, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jScrollPane2)
+        );
+        jInternalFrame1Layout.setVerticalGroup(
+            jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jInternalFrame1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jToolBar2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jScrollPane1)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jInternalFrame1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jInternalFrame1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
 
         pack();
@@ -237,6 +405,42 @@ public class NhaCungCap extends javax.swing.JInternalFrame {
 
     }//GEN-LAST:event_btnResetActionPerformed
 
+    private void btnAdd1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdd1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAdd1ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void exportExcel1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportExcel1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_exportExcel1ActionPerformed
+
+    private void importExcel1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importExcel1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_importExcel1ActionPerformed
+
+    private void txtSearchForm1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchForm1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSearchForm1ActionPerformed
+
+    private void txtSearchForm1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchForm1KeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSearchForm1KeyPressed
+
+    private void txtSearchForm1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchForm1KeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSearchForm1KeyReleased
+
+    private void btnReset1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReset1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnReset1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -274,17 +478,31 @@ public class NhaCungCap extends javax.swing.JInternalFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnAdd1;
     private javax.swing.JButton btnReset;
+    private javax.swing.JButton btnReset1;
     private javax.swing.JComboBox<String> cbxlLuaChon;
+    private javax.swing.JComboBox<String> cbxlLuaChon1;
     private javax.swing.JButton exportExcel;
+    private javax.swing.JButton exportExcel1;
     private javax.swing.JButton importExcel;
+    private javax.swing.JButton importExcel1;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
+    private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JToolBar.Separator jSeparator1;
+    private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JToolBar jToolBar2;
     private javax.swing.JTable tblNCC;
+    private javax.swing.JTable tblNCC1;
     private javax.swing.JTextField txtSearchForm;
+    private javax.swing.JTextField txtSearchForm1;
     // End of variables declaration//GEN-END:variables
 }
