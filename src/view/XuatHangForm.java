@@ -8,7 +8,7 @@ package view;
  *
  * @author huy
  */
-public class XuatHangForm extends javax.swing.JFrame {
+public class XuatHangForm extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form XuatHangForm

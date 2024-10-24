@@ -1,18 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
 
 import dao.Accounts;
+import java.security.MessageDigest;
 import javax.swing.JOptionPane;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author ASUS
- */
 public class RegisterFrm extends javax.swing.JFrame {
     Accounts accounts = new Accounts();
 
@@ -289,7 +282,8 @@ public class RegisterFrm extends javax.swing.JFrame {
         if(checkRong()){
             String fullName = txtFullname.getText();
             String userName = txtUsername.getText();
-            String matKhau = new String(txtMatkhau.getPassword());
+//            String matKhau = new String(txtMatkhau.getPassword());
+            String matKhau = passwordHash(txtMatkhau.getText());
             String xacNhanmk = new String(txtXacnhanmk.getPassword());
             String email = txtemail.getText();
             String phone = txtPhone.getText();
@@ -297,14 +291,14 @@ public class RegisterFrm extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(rootPane, "Username đã tồn tại!");
                 return;
             }
-            if (!accounts.checkPassword(matKhau)) {
-                JOptionPane.showMessageDialog(rootPane, "Mật khẩu không hợp lệ!");
-                return;
-            }
-            if (!accounts.checkPassword(matKhau, xacNhanmk)) {
-                JOptionPane.showMessageDialog(rootPane, "Mật khẩu và xác nhận mật khẩu không khớp!");
-                return;
-            }
+//            if (!accounts.checkPassword(matKhau)) {
+//                JOptionPane.showMessageDialog(rootPane, "Mật khẩu không hợp lệ!");
+//                return;
+//            }
+//            if (!accounts.checkPassword(matKhau, xacNhanmk)) {
+//                JOptionPane.showMessageDialog(rootPane, "Mật khẩu và xác nhận mật khẩu không khớp!");
+//                return;
+//            }
 
             if (!accounts.checkEmail(email)) {
                 JOptionPane.showMessageDialog(rootPane, "Email không hợp lệ!");
@@ -332,5 +326,20 @@ public class RegisterFrm extends javax.swing.JFrame {
         this.dispose();
         new LoginFrm().setVisible(true);
     }//GEN-LAST:event_btnLoginActionPerformed
-
+    
+    // mã hóa password
+    public static String passwordHash(String password){
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA");
+            md.update(password.getBytes());
+            byte[] rbt = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for(byte b : rbt){
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+        }
+        return null;
+    }
 }

@@ -8,7 +8,7 @@ package view;
  *
  * @author huy
  */
-public class NhapHang extends javax.swing.JFrame {
+public class NhapHang extends javax.swing.JInternalFrame {
 
     /**
      * Creates new form NhapHang
