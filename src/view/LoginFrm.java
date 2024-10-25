@@ -186,7 +186,7 @@ public class LoginFrm extends javax.swing.JFrame {
         };
         if(accounts.checkLogin(txtUsername.getText(), txtPassword.getText())){
             this.dispose();
-            new AccountFrm().setVisible(true);
+            new HomeFrm().setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Sai tên đăng nhập hoặc mật khẩu!");
         }
