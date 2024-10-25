@@ -10,6 +10,28 @@
 <project name="QLKH" default="default" basedir=".">
     <description>Builds, tests, and runs the project QLKH.</description>
     <import file="nbproject/build-impl.xml"/>
+    <path id="javac.classpath">
+        <fileset dir="lib">
+            <include name="*.jar"/>
+        </fileset>
+        <!-- Add other classpath entries if needed -->
+    </path>
+    <target name="-init-macrodef-javac">
+        <macrodef name="javac">
+            <attribute name="destdir"/>
+            <element name="classpath" optional="yes"/>
+            <sequential>
+                <javac destdir="@{destdir}">
+                    <classpath>
+                        <path refid="javac.classpath"/>
+                        <fileset dir="lib">
+                            <include name="*.jar"/>
+                        </fileset>
+                    </classpath>
+                </javac>
+            </sequential>
+        </macrodef>
+    </target>
     <!--
 
     There exist several targets which are by default empty and which can be 
@@ -67,7 +89,7 @@
     Notice that the overridden target depends on the jar target and not only on 
     the compile target as the regular run target does. Again, for a list of available 
     properties which you can use, check the target you are overriding in the
-    nbproject/build-impl.xml file. 
+    nbproject/build-impl.xml file.
 
     -->
 </project>
