@@ -20,7 +20,7 @@ public class HomePageFrm extends javax.swing.JFrame {
         initComponents();
 //        setSize(1000, 700);
         setLocationRelativeTo(null);
-        
+
     }
 
     /**
@@ -239,7 +239,7 @@ public class HomePageFrm extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
+
 
     private void lbNCCMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbNCCMouseClicked
         // TODO add your handling code here:
