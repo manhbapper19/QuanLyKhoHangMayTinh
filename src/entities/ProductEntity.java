@@ -1,36 +1,77 @@
 package entities;
 
 public class ProductEntity {
+    private int congSuatNguon;
     private  String maMay;
     private String tenMay;
     private int soLuong;
     private String ram;
     private String cardManHinh;
 
-    public ProductEntity(String loaiMay, double kichThuocMan, String gia, String cardManHinh, String dungLuongPin, String mainBoard, String maMay, String ram, int soLuong, String tenCpu, String tenMay, int trangThai, String xuatXu) {
-        this.loaiMay = loaiMay;
-        this.kichThuocMan = kichThuocMan;
-        this.gia = gia;
-        this.cardManHinh = cardManHinh;
-        this.dungLuongPin = dungLuongPin;
-        this.mainBoard = mainBoard;
+    public int getCongSuatNguon() {
+        return congSuatNguon;
+    }
+
+    public void setCongSuatNguon(int congSuatNguon) {
+        this.congSuatNguon = congSuatNguon;
+    }
+
+    public ProductEntity(String maMay, String tenMay, int soLuong, String tenCpu, String ram, String cardManHinh, double gia, String mainBoard, Integer congSuatNguon, String loaiMay, String rom, Double kichThuocMan, String dungLuongPin, String xuatXu, Integer trangThai) {
         this.maMay = maMay;
-        this.ram = ram;
+        this.tenMay = tenMay;
         this.soLuong = soLuong;
         this.tenCpu = tenCpu;
-        this.tenMay = tenMay;
-        this.trangThai = trangThai;
+        this.ram = ram;
+        this.cardManHinh = cardManHinh;
+        this.gia = gia;
+        this.mainBoard = mainBoard;
+        this.congSuatNguon = congSuatNguon;
+        this.loaiMay = loaiMay;
+        this.rom = rom;
+        this.kichThuocMan = kichThuocMan;
+        this.dungLuongPin = dungLuongPin;
         this.xuatXu = xuatXu;
+        this.trangThai = trangThai;
+    }
+
+    @Override
+    public String toString() {
+        return "ProductEntity{" +
+                "cardManHinh='" + cardManHinh + '\'' +
+                ", maMay='" + maMay + '\'' +
+                ", tenMay='" + tenMay + '\'' +
+                ", soLuong=" + soLuong +
+                ", ram='" + ram + '\'' +
+                ", tenCpu='" + tenCpu + '\'' +
+                ", mainBoard='" + mainBoard + '\'' +
+                ", loaiMay='" + loaiMay + '\'' +
+                ", gia='" + gia + '\'' +
+                ", kichThuocMan=" + kichThuocMan +
+                ", dungLuongPin='" + dungLuongPin + '\'' +
+                ", xuatXu='" + xuatXu + '\'' +
+                ", trangThai=" + trangThai +
+                ", rom='" + rom + '\'' +
+                '}';
     }
 
     private String tenCpu;
     private String mainBoard;//nullable
     private String loaiMay;
-    private String gia;
+    private double gia;
     private double kichThuocMan;
     private String dungLuongPin;
+
+    public String getRom() {
+        return rom;
+    }
+
+    public void setRom(String rom) {
+        this.rom = rom;
+    }
+
     private String xuatXu;
     private int trangThai;
+    private String rom;
 
     public String getDungLuongPin() {
         return dungLuongPin;
@@ -48,11 +89,11 @@ public class ProductEntity {
         this.cardManHinh = cardManHinh;
     }
 
-    public String getGia() {
+    public Double getGia() {
         return gia;
     }
 
-    public void setGia(String gia) {
+    public void setGia(double gia) {
         this.gia = gia;
     }
 
@@ -136,22 +177,4 @@ public class ProductEntity {
         this.xuatXu = xuatXu;
     }
 
-    @Override
-    public String toString() {
-        return "ProductEntity{" +
-                "dungLuongPin='" + dungLuongPin + '\'' +
-                ", cardManHinh='" + cardManHinh + '\'' +
-                ", gia='" + gia + '\'' +
-                ", kichThuocMan=" + kichThuocMan +
-                ", loaiMay='" + loaiMay + '\'' +
-                ", mainBoard='" + mainBoard + '\'' +
-                ", maMay='" + maMay + '\'' +
-                ", ram='" + ram + '\'' +
-                ", soLuong=" + soLuong +
-                ", tenCpu='" + tenCpu + '\'' +
-                ", tenMay='" + tenMay + '\'' +
-                ", trangThai=" + trangThai +
-                ", xuatXu='" + xuatXu + '\'' +
-                '}';
-    }
 }

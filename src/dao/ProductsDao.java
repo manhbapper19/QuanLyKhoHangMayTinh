@@ -17,7 +17,7 @@ public class ProductsDao {
     PreparedStatement ps;
     ResultSet rs;
 
-    private List<ProductEntity> getProductList() throws SQLException {
+    public List<ProductEntity> getProductList() throws SQLException {
         String sql = "SELECT * FROM maytinh";
         try {
             ps = conn.prepareStatement(sql);
@@ -25,19 +25,21 @@ public class ProductsDao {
             List<ProductEntity> productList = new ArrayList<>();
             while (rs.next()) {
                 ProductEntity product = new ProductEntity(
-                        rs.getString("loaiMay"),
-                        rs.getDouble("kichThuocMan"),
-                        rs.getString("gia"),
-                        rs.getString("cardManHinh"),
-                        rs.getString("dungLuongPin"),
-                        rs.getString("mainBoard"),
                         rs.getString("maMay"),
-                        rs.getString("ram"),
-                        rs.getInt("SoLuong"),
-                        rs.getString("tenCpu"),
                         rs.getString("tenMay"),
-                        rs.getInt("trangThai"),
-                        rs.getString("xuatXu")
+                        rs.getInt("soLuong"),
+                        rs.getString("tenCpu"),
+                        rs.getString("ram"),
+                        rs.getString("cardManHinh"),
+                        rs.getDouble("gia"),
+                        rs.getString("mainBoard"),
+                        rs.getInt("congSuatNguon"),
+                        rs.getString("loaiMay"),
+                        rs.getString("rom"),
+                        rs.getDouble("kichThuocMan"),
+                        rs.getString("dungLuongPin"),
+                        rs.getString("xuatXu"),
+                        rs.getInt("trangThai")
                 );
                 productList.add(product);
             }
@@ -47,22 +49,24 @@ public class ProductsDao {
         }
     }
     private boolean insertProduct(ProductEntity product) throws SQLException {
-        String sql = "INSERT INTO maytinh values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO maytinh values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         try {
             ps = conn.prepareStatement(sql);
-            ps.setString(1, product.getLoaiMay());
-            ps.setDouble(2, product.getKichThuocMan());
-            ps.setString(3, product.getGia());
-            ps.setString(4, product.getCardManHinh());
-            ps.setString(5, product.getDungLuongPin());
-            ps.setString(6, product.getMainBoard());
-            ps.setString(7, product.getMaMay());
-            ps.setString(8, product.getRam());
-            ps.setInt(9, product.getSoLuong());
-            ps.setString(10, product.getTenCpu());
-            ps.setString(11, product.getTenMay());
-            ps.setInt(12, product.getTrangThai());
-            ps.setString(13, product.getXuatXu());
+            ps.setString(1, product.getMaMay());
+            ps.setString(2, product.getTenMay());
+            ps.setInt(3, product.getSoLuong());
+            ps.setString(4, product.getTenCpu());
+            ps.setString(5, product.getRam());
+            ps.setString(6, product.getCardManHinh());
+            ps.setDouble(7, product.getGia());
+            ps.setString(8, product.getMainBoard());
+            ps.setInt(9, product.getCongSuatNguon());
+            ps.setString(10, product.getLoaiMay());
+            ps.setString(11, product.getRom());
+            ps.setObject(12, product.getKichThuocMan());
+            ps.setString(13, product.getDungLuongPin());
+            ps.setString(14, product.getXuatXu());
+            ps.setObject(15, product.getTrangThai());
             if (ps.executeUpdate() > 0) {
                 return true;
             }
