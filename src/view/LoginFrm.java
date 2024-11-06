@@ -1,19 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
 
-import dao.Accounts;
-
+import dao.AccountsDAO;
 import javax.swing.*;
 
-/**
- *
- * @author ASUS
- */
 public class LoginFrm extends javax.swing.JFrame {
-    Accounts accounts = new Accounts();
+    AccountsDAO accounts = new AccountsDAO();
     /**
      * Creates new form LoginFrm
      */

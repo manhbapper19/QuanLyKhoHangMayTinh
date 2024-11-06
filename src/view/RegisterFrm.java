@@ -1,13 +1,13 @@
 package view;
 
-import dao.Accounts;
+import dao.AccountsDAO;
 import java.security.MessageDigest;
 import javax.swing.JOptionPane;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class RegisterFrm extends javax.swing.JFrame {
-    Accounts accounts = new Accounts();
+    AccountsDAO accounts = new AccountsDAO();
 
     /**
      * Creates new form RegisterFrm

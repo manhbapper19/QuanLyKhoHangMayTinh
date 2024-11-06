@@ -668,8 +668,8 @@ public class ThongKeForm extends javax.swing.JFrame {
     private void btnResetThongKePrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetThongKePrActionPerformed
         // TODO add your handling code here:
         txtNamePr.setText("");
-        jDateChooserFromPr.setCalendar(null);
-        jDateChooserToPr.setCalendar(null);
+//        jDateChooserFromPr.setCalendar(null);
+//        jDateChooserToPr.setCalendar(null);
     }//GEN-LAST:event_btnResetThongKePrActionPerformed
 
     private void btnDetailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetailActionPerformed
@@ -692,12 +692,12 @@ public class ThongKeForm extends javax.swing.JFrame {
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
-        jComboBoxLuaChon.setSelectedIndex(0);
-        jTextFieldSearch.setText("");
-        jDateChooserFrom.setCalendar(null);
-        jDateChooserTo.setCalendar(null);
-        giaDen.setText("");
-        giaTu.setText("");
+//        jComboBoxLuaChon.setSelectedIndex(0);
+//        jTextFieldSearch.setText("");
+//        jDateChooserFrom.setCalendar(null);
+//        jDateChooserTo.setCalendar(null);
+//        giaDen.setText("");
+//        giaTu.setText("");
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jDateChooserFromPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooserFromPropertyChange
