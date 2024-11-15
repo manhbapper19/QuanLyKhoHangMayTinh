@@ -1,15 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
 import java.util.Objects;
 
-/**
- *
- * @author kali
- */
 public class NhaCungCap {
     private String maNhaCungCap;
     private String tenNhaCungCap;
@@ -57,45 +49,8 @@ public class NhaCungCap {
     public void setDiaChi(String diaChi) {
         this.diaChi = diaChi;
     }
-
-//    @Override
-//    public int hashCode() {
-//        int hash = 3;
-//        hash = 29 * hash + Objects.hashCode(this.maNhaCungCap);
-//        hash = 29 * hash + Objects.hashCode(this.tenNhaCungCap);
-//        hash = 29 * hash + Objects.hashCode(this.sdt);
-//        hash = 29 * hash + Objects.hashCode(this.diaChi);
-//        return hash;
-//    }
-//
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (this == obj) {
-//            return true;
-//        }
-//        if (obj == null) {
-//            return false;
-//        }
-//        if (getClass() != obj.getClass()) {
-//            return false;
-//        }
-//        final NhaCungCap other = (NhaCungCap) obj;
-//        if (!Objects.equals(this.maNhaCungCap, other.maNhaCungCap)) {
-//            return false;
-//        }
-//        if (!Objects.equals(this.tenNhaCungCap, other.tenNhaCungCap)) {
-//            return false;
-//        }
-//        if (!Objects.equals(this.sdt, other.sdt)) {
-//            return false;
-//        }
-//        return Objects.equals(this.diaChi, other.diaChi);
-//    }
-
     @Override
     public String toString() {
         return "NhaCungCap{" + "maNhaCungCap=" + maNhaCungCap + ", tenNhaCungCap=" + tenNhaCungCap + ", sdt=" + sdt + ", diaChi=" + diaChi + '}';
     }
-    
-    
 }

@@ -239,7 +239,7 @@ public class AddSanPham extends javax.swing.JDialog {
         sp.setGia(Double.parseDouble(txtGia.getText()));
         sp.setLoaiMay(jComboBox1.getSelectedItem().toString());
         sp.setTrangThai(1);
-        if (sanPhamDAO.addSanPham(sp)) {
+        if (sanPhamDAO.insert(sp)) {
             JOptionPane.showMessageDialog(this, "Đã thêm thông tin sản phẩm thành công!");
             sanPhamFrm.setTableSanPhamData();
             dispose();

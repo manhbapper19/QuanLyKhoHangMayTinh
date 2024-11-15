@@ -1,19 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dao;
 
 import database.JDBC;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-/**
- *
- * @author ASUS
- */
-public class AccountsDAO {
+import javax.swing.*;
+
+import model.Account;
+
+public class AccountsDAO implements DAOInterface<Account>{
     Connection conn = JDBC.getJDBCConnection();
     PreparedStatement ps;
     ResultSet rs;
@@ -87,5 +83,97 @@ public class AccountsDAO {
         String regex = "0[0-9]{9}";
         if(phone.matches(regex)) return true;
         return false;
+    }
+    
+    // check điền đầy đủ thông tin
+    public boolean checkRong(JTextField txtUserName, JTextField txtFullName, JPasswordField txtMatkhau, JPasswordField txtXacnhanmk, JTextField txtemail, JTextField txtPhone) {
+        if (txtUserName.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Bạn chưa nhập username!");
+            return false;
+        }
+        if (txtFullName.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Bạn chưa nhập fullname!");
+            return false;
+        }
+        if (txtMatkhau.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Bạn chưa nhập mật khẩu!");
+            return false;
+        }
+        if (txtXacnhanmk.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Bạn chưa nhập xác nhận mật khẩu!");
+            return false;
+        }
+        if (txtemail.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Bạn chưa nhập email!");
+            return false;
+        }
+        if (txtPhone.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Bạn chưa nhập phone!");
+            return false;
+        }
+        return true;
+    }
+    
+    // check điền đầy đủ thông tin
+    public boolean checkNull(JTextField txtUsername, JPasswordField txtPassword){
+        if(txtUsername.getText().equals("") || txtPassword.getText().equals("")){
+            JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ thông tin!");
+            return false;
+        }
+        return true;
+    }
+    
+    @Override
+    public boolean insert(Account acc) {
+        String sql = "INSERT INTO account values (?,?,?,?,?)";
+        try {
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, acc.getUserName());
+            ps.setString(2, acc.getFullName());
+            ps.setString(3, acc.getPassword());
+            ps.setString(4, acc.getEmail());
+            ps.setString(5, acc.getPhone());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean update(Account t) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
+    }
+
+    @Override
+    public boolean delete(Account t) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public ArrayList<Account> selectAll() {
+        ArrayList<Account> list = new ArrayList<>();
+        String sql = "SELECT * FROM account";
+        try {
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            while(rs.next()){
+                Account acc = new Account();
+                acc.setUserName(rs.getString("userName"));
+                acc.setFullName(rs.getString("fullName"));
+                acc.setEmail(rs.getString("email"));
+                acc.setPhone(rs.getString("phone"));
+                list.add(acc);
+            }
+        } catch (Exception e){
+            
+        }
+        return list;
+    }
+
+    @Override
+    public Account selectById(String t) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

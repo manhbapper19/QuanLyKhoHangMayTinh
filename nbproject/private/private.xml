@@ -12,13 +12,16 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/CODE/Java/QLKH/src/view/AddNhaCungCap.java</file>
+            <file>file:/D:/CODE/Java/QLKH/src/model/Account.java</file>
             <file>file:/D:/CODE/Java/QLKH/src/view/SanPhamFrm.java</file>
-            <file>file:/D:/CODE/Java/QLKH/src/view/UpdateSanPham.java</file>
             <file>file:/D:/CODE/Java/QLKH/src/dao/SanPhamDAO.java</file>
-            <file>file:/D:/CODE/Java/QLKH/src/view/AddSanPham.java</file>
-            <file>file:/D:/CODE/Java/QLKH/src/view/NhaCungCap.java</file>
+            <file>file:/D:/CODE/Java/QLKH/src/view/Register.java</file>
+            <file>file:/D:/CODE/Java/QLKH/src/view/MainFrm.java</file>
             <file>file:/D:/CODE/Java/QLKH/src/controller/Home.java</file>
+            <file>file:/D:/CODE/Java/QLKH/src/view/NhapHang.java</file>
+            <file>file:/D:/CODE/Java/QLKH/src/view/HomeFrm.java</file>
+            <file>file:/D:/CODE/Java/QLKH/src/view/Login.java</file>
+            <file>file:/D:/CODE/Java/QLKH/src/view/TaiKhoanFrm.java</file>
         </group>
     </open-files>
 </project-private>

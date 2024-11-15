@@ -6,15 +6,19 @@ import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.List;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import org.w3c.dom.Node;
-import view.NhaCungCap;
+import view.MainFrm;
+import view.NhaCungCapFrm;
 import view.NhapHang;
 import view.PhieuNhap;
 import view.PhieuXuat;
 import view.SanPhamFrm;
-import view.TaiKhoan;
+import view.TaiKhoanFrm;
 import view.ThongKe;
 import view.TonKho;
 import view.XuatHang;
@@ -72,7 +76,7 @@ public class ChuyenManHinhController {
                     node = new SanPhamFrm();
                     break;
                 case "NhaCungCap":
-                    node = new NhaCungCap();
+                    node = new NhaCungCapFrm();
                     break;
                 case "NhapHang":
                     node = new NhapHang();
@@ -90,11 +94,20 @@ public class ChuyenManHinhController {
                     node = new TonKho();
                     break;
                 case "TaiKhoan":
-                    node = new TaiKhoan();
+                    node = new TaiKhoanFrm();
                     break;
                 case "ThongKe":
                     node = new ThongKe();
                     break;
+                case "DangXuat" :
+                   int confirm = JOptionPane.showConfirmDialog(root, "Bạn có chắc chắn muốn đăng xuất?", "Xác nhận đăng xuất", JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        JFrame mainFrame = (JFrame) SwingUtilities.getWindowAncestor(root);
+                        mainFrame.dispose();
+                        mainFrame = new MainFrm();
+                        mainFrame.setVisible(true);
+                    }
+                    return;
                 default:
                     node = new SanPhamFrm();
                     break;

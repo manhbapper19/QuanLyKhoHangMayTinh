@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 
@@ -23,12 +25,14 @@ public class SanPhamFrm extends javax.swing.JPanel implements ActionListener{
         addActionListener();
         setTableSanPhamData();
         populateColumnNamesComboBox();
+        addSearchListener();
+        setTableSanPhamData1();
     }
-    
-    // hiển thị dữ liệu ra table
+
+    // hiển thị dữ liệu từ SQL ra table
     public void setTableSanPhamData(){
         try {
-            listSanPham = sanPhamDAO.getListSanPham();
+            listSanPham = sanPhamDAO.selectAll();
             DefaultTableModel model = (DefaultTableModel)tbSanPham.getModel();
             model.setRowCount(0);
             for (model.SanPham sp : listSanPham) {
@@ -74,7 +78,85 @@ public class SanPhamFrm extends javax.swing.JPanel implements ActionListener{
             jComboBox1.addItem(columnName);
         }
     }
+    
+    private void setTableSanPhamData1() {
+        try {
+            listSanPham = sanPhamDAO.selectAll();
+            updateTableData(listSanPham);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    private void updateTableData(List<SanPham> list) {
+        DefaultTableModel model = (DefaultTableModel) tbSanPham.getModel();
+        model.setRowCount(0);
+        for (SanPham sp : list) {
+            model.addRow(new Object[]{
+                    sp.getMaMay(), sp.getTenMay(), sp.getSoLuong(), sp.getTenCpu(),
+                    sp.getRam(), sp.getGia(), sp.getLoaiMay(), sp.getRom()
+            });
+        }
+    }
+
+    private void addSearchListener() {
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterTableData();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterTableData();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterTableData();
+            }
+        });
+    }
+
+    private void filterTableData() {
+        String searchText = txtSearch.getText().toLowerCase(); // lấy dữ liệu tìm kiếm từ txtSearch 
+        String selectedColumn = (String) jComboBox1.getSelectedItem(); // lấy giá trị đã chọn trong jcombobox1
+        List<SanPham> filteredList = new ArrayList<>();
+
+        for (SanPham sp : listSanPham) {
+            String columnValue = getColumnValue(sp, selectedColumn).toLowerCase(); // lấy giá trị của 1 cột cụ thể từ đối tượng sp
+            if (columnValue.contains(searchText)) {
+                filteredList.add(sp);
+            }
+        }
+
+        updateTableData(filteredList);
+    }
+    
+    // lấy giá trị của cột tương ứng cho 1 sản phẩm cụ thể
+    private String getColumnValue(SanPham sp, String columnName) {
+        switch (columnName) {
+            case "Mã máy":
+                return sp.getMaMay();
+            case "Tên máy":
+                return sp.getTenMay();
+            case "Số lượng":
+                return String.valueOf(sp.getSoLuong());
+            case "Tên CPU":
+                return sp.getTenCpu();
+            case "RAM":
+                return sp.getRam();
+            case "Gía":
+                return String.valueOf(sp.getGia());
+            case "Loại máy":
+                return sp.getLoaiMay();
+            case "ROM":
+                return sp.getRom();
+            default:
+                return "";
+        }
+    }
+    
        /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -311,7 +393,9 @@ public class SanPhamFrm extends javax.swing.JPanel implements ActionListener{
                 String maMay = (String) tbSanPham.getValueAt(selectedRow, 0);
                 int confirm = JOptionPane.showConfirmDialog(this, "Bạn muốn xóa sản phẩm này ?", "Confirm Delete", JOptionPane.YES_NO_OPTION);
                 if (confirm == JOptionPane.YES_OPTION) {
-                    if (sanPhamDAO.deleteSanPham(maMay)) {
+                    SanPham sp = new SanPham();
+                    sp.setMaMay(maMay);
+                    if (sanPhamDAO.delete(sp)) {
                         JOptionPane.showMessageDialog(this, "Sản phẩm đã xóa thành công!");
                         setTableSanPhamData();
                     } else {

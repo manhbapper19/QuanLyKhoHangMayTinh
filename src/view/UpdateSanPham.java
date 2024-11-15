@@ -289,7 +289,7 @@ public class UpdateSanPham extends javax.swing.JDialog {
         sanPham.setGia(Double.parseDouble(txtGia.getText()));
         sanPham.setLoaiMay(jComboBox1.getSelectedItem().toString());
 
-        if (sanPhamDAO.updateSanPham(sanPham)) {
+        if (sanPhamDAO.update(sanPham)) {
             JOptionPane.showMessageDialog(this, "Cập nhật thông tin sản phẩm thành công!");
             sanPhamFrm.setTableSanPhamData();
             dispose();
