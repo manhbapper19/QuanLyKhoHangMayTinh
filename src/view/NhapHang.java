@@ -1,18 +1,59 @@
 package view;
 
+
+import dao.Dto.ChitietPhieuNhapDto;
+import dao.NhaCungCapDAO;
+import dao.PhieuNhapDAO;
 import dao.SanPhamDAO;
+
+import java.awt.*;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import model.ChiTietPhieu;
+import model.NhaCungCap;
+import model.PhieuNhap;
 import model.SanPham;
 
 public class NhapHang extends javax.swing.JPanel {
     private SanPhamDAO sanPhamDAO = new SanPhamDAO();
+    private PhieuNhapDAO phieuNhapDAO = new PhieuNhapDAO();
+    private NhaCungCapDAO nhaCungCapDAO = new NhaCungCapDAO();
+    private String maPhieu;
     ArrayList<SanPham> listDanhMucSanPham = new ArrayList<>();
+    ArrayList<ChitietPhieuNhapDto> listChiTietPhieu = new ArrayList<>();
+    private PhieuNhap phieuNhap = new PhieuNhap();
     public NhapHang() {
         initComponents();
         setTableDanhMucSanPham();
-    }
 
+        jTable4.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tbDanhMucSanPham.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        setNcc();
+        setPhieuNhap();
+    }
+    public void renderCtPn(){
+        jTable4.removeAll();
+        DefaultTableModel model = (DefaultTableModel)jTable4.getModel();
+        model.setRowCount(0);
+        for(int i = 0; i < listChiTietPhieu.size(); i++){
+            model.addRow(new Object[]{
+                    i+1,listChiTietPhieu.get(i).getMaMay(),listChiTietPhieu.get(i).getTenSanPham(),listChiTietPhieu.get(i).getSoLuong(),listChiTietPhieu.get(i).getDonGia()
+            });
+        }
+    }
+    public void CalculatePrice(){
+        double sum = 0;
+        for(var i : listChiTietPhieu){
+            sum += i.getSoLuong() * i.getDonGia();
+        }
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        String formattedNumber = formatter.format(sum);
+        jLabel6.setText(formattedNumber + "đ");
+    }
     // hiển thị dữ liệu sản phẩm từ SQL ra table danh mục sản phẩm
     public void setTableDanhMucSanPham(){
         try {
@@ -28,7 +69,59 @@ public class NhapHang extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-    
+    private void setNcc() {
+        try {
+            ArrayList<NhaCungCap> list = nhaCungCapDAO.selectAll();
+            if(list.isEmpty()){
+                return;
+            }
+            jComboBox3.removeAllItems();
+            for (NhaCungCap i : list) {
+                jComboBox3.addItem(i);
+            }
+            jComboBox3.setSelectedIndex(0);
+            jComboBox3.setRenderer(new DefaultListCellRenderer() {
+                @Override
+                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                    super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                    if (value instanceof NhaCungCap) {
+                        NhaCungCap item = (NhaCungCap) value;
+                        setText(item.getTenNhaCungCap());
+                    }
+                    return this;
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private void setPhieuNhap(){
+        try {
+            String id = phieuNhapDAO.taoMaPhieu();
+            phieuNhap.setMaPhieu(id);
+            maPhieu = id;
+            phieuNhap.setNguoiTao("emilia");
+            phieuNhap.setThoiGianTao(new Timestamp(System.currentTimeMillis()));
+            jTextField5.enable(false);
+            jTextField5.setText(id);
+            jTextField6.setText("emilia");
+            jTextField6.enable(false);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    public int showInputDialog(int quantity) {
+        String input = JOptionPane.showInputDialog(null, "Enter a quantity:", String.valueOf(quantity));
+        if (input == null) {
+            return -1;
+        }
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -115,6 +208,11 @@ public class NhapHang extends javax.swing.JPanel {
         jTextField4.setText("1");
 
         jButton14.setText("Thêm");
+        jButton14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton14ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -151,7 +249,7 @@ public class NhapHang extends javax.swing.JPanel {
 
         jLabel4.setText("Người tạo phiếu");
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        //jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel5.setText("Tổng tiền : ");
 
@@ -167,8 +265,18 @@ public class NhapHang extends javax.swing.JPanel {
         jButton16.setText("Nhập Excel");
 
         jButton17.setText("Sửa số lượng");
+        jButton17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton17ActionPerformed(evt);
+            }
+        });
 
         jButton18.setText("Xóa sản phẩm");
+        jButton18.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton18ActionPerformed(evt);
+            }
+        });
 
         jTable4.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -296,11 +404,88 @@ public class NhapHang extends javax.swing.JPanel {
 
     private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
         // TODO add your handling code here:
+        if(listChiTietPhieu.isEmpty()){
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        try{
+            phieuNhap.setNhaCungCap(((NhaCungCap)jComboBox3.getSelectedItem()).getMaNhaCungCap());
+            double sum = 0;
+            for(var i : listChiTietPhieu){
+                sum += i.getSoLuong() * i.getDonGia();
+            }
+            phieuNhap.setTongTien(sum);
+            ArrayList<ChiTietPhieu> chiTietPhieuList = new ArrayList<>();
+            for (ChitietPhieuNhapDto dto : listChiTietPhieu) {
+                ChiTietPhieu chiTietPhieu = new ChiTietPhieu();
+                chiTietPhieu.setMaPhieu(maPhieu);
+                chiTietPhieu.setMaMay(dto.getMaMay());
+                chiTietPhieu.setSoLuong(dto.getSoLuong());
+                chiTietPhieu.setDonGia(dto.getDonGia());
+                chiTietPhieuList.add(chiTietPhieu);
+            }
+            phieuNhap.setCTPhieu(chiTietPhieuList);
+            if(phieuNhapDAO.AddPhieuNhap(phieuNhap)) {
+                JOptionPane.showMessageDialog(this, "Nhập hàng thành công");
+                setPhieuNhap();
+                listChiTietPhieu.clear();
+                renderCtPn();
+                CalculatePrice();
+                setTableDanhMucSanPham();
+            }
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(this, "Nhập hàng thất bại");
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_jButton15ActionPerformed
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         txtSearch.setText("");
     }//GEN-LAST:event_btnResetActionPerformed
+
+    private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
+//        // TODO add your handling code here:
+        var row = tbDanhMucSanPham.getSelectedRow();
+        if(row == -1){
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        var sp = listDanhMucSanPham.get(row);
+        var soLuong = Integer.parseInt(jTextField4.getText());
+        ChitietPhieuNhapDto ct = new ChitietPhieuNhapDto(maPhieu,sp.getMaMay(),soLuong,sp.getGia(),sp.getTenMay());
+        listChiTietPhieu.add(ct);
+        renderCtPn();
+        CalculatePrice();
+
+    }//GEN-LAST:event_jButton14ActionPerformed
+
+    private void jButton18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton18ActionPerformed
+        // TODO add your handling code here:
+        int id = jTable4.getSelectedRow();
+        if(id == -1){
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        listChiTietPhieu.remove(id);
+        renderCtPn();
+        CalculatePrice();
+    }//GEN-LAST:event_jButton18ActionPerformed
+
+    private void jButton17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton17ActionPerformed
+        // TODO add your handling code here:
+        int id = jTable4.getSelectedRow();
+        if(id == -1){
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        int quantity = showInputDialog(listChiTietPhieu.get(id).getSoLuong());
+        if(quantity == -1){
+            return;
+        }
+        listChiTietPhieu.get(id).setSoLuong(quantity);
+        renderCtPn();
+        CalculatePrice();
+    }//GEN-LAST:event_jButton17ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -310,7 +495,7 @@ public class NhapHang extends javax.swing.JPanel {
     private javax.swing.JButton jButton16;
     private javax.swing.JButton jButton17;
     private javax.swing.JButton jButton18;
-    private javax.swing.JComboBox<String> jComboBox3;
+    private javax.swing.JComboBox<NhaCungCap> jComboBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
