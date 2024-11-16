@@ -25,7 +25,7 @@ public class NhapHang extends javax.swing.JPanel {
     private String maPhieu;
     ArrayList<SanPham> listDanhMucSanPham = new ArrayList<>();
     ArrayList<ChitietPhieuNhapDto> listChiTietPhieu = new ArrayList<>();
-    private PhieuNhap phieuNhap = new PhieuNhap();
+    private PhieuNhap phieuNhap ;
     public NhapHang() {
         initComponents();
         setTableDanhMucSanPham();
@@ -97,6 +97,7 @@ public class NhapHang extends javax.swing.JPanel {
     }
     private void setPhieuNhap(){
         try {
+            phieuNhap = new PhieuNhap();
             String id = phieuNhapDAO.taoMaPhieu();
             phieuNhap.setMaPhieu(id);
             maPhieu = id;
@@ -452,11 +453,23 @@ public class NhapHang extends javax.swing.JPanel {
         }
         var sp = listDanhMucSanPham.get(row);
         var soLuong = Integer.parseInt(jTextField4.getText());
+        int index = -1;
+        for (int i = 0; i < listChiTietPhieu.size(); i++) {
+            if (listChiTietPhieu.get(i).getMaMay().equals(sp.getMaMay())) {
+                index = i;
+                break;
+            }
+        }
+        if(index != -1){
+            listChiTietPhieu.get(index).setSoLuong(listChiTietPhieu.get(index).getSoLuong() + soLuong);
+            renderCtPn();
+            CalculatePrice();
+            return;
+        }
         ChitietPhieuNhapDto ct = new ChitietPhieuNhapDto(maPhieu,sp.getMaMay(),soLuong,sp.getGia(),sp.getTenMay());
         listChiTietPhieu.add(ct);
         renderCtPn();
         CalculatePrice();
-
     }//GEN-LAST:event_jButton14ActionPerformed
 
     private void jButton18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton18ActionPerformed

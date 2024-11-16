@@ -10,11 +10,15 @@ public class HomeFrm extends javax.swing.JFrame {
     /**
      * Creates new form HomeFrm
      */
-    public HomeFrm() {
+    private String username;
+    private String userId;
+    public HomeFrm(String username,String userId) {
         initComponents();
+        this.username = username;
+        this.userId = userId;
         setTitle("QUẢN LÝ KHO HÀNG MÁY TÍNH");
         setLocationRelativeTo(null);
-        ChuyenManHinhController controller = new ChuyenManHinhController(jpnView);
+        ChuyenManHinhController controller = new ChuyenManHinhController(jpnView, username, userId);
         controller.setView(jpnSanPham, jlbSanPham);
 
         List<DanhMucBean> listItem = new ArrayList<>();
@@ -29,7 +33,7 @@ public class HomeFrm extends javax.swing.JFrame {
         listItem.add(new DanhMucBean("ThongKe", jpnThongKe, jlbThongKe));
         listItem.add(new DanhMucBean("DoiThongTin", jpnDoiThongTin, jlbDoiThongTin));
         listItem.add(new DanhMucBean("DangXuat", jpnDangXuat, jlbDangXuat));
-
+        jLabel1.setText("Xin chào ! " + username);
         controller.setEvent(listItem);
     }
 

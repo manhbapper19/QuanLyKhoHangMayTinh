@@ -8,9 +8,15 @@ import dao.Dto.ChitietPhieuNhapDto;
 import dao.NhaCungCapDAO;
 import dao.PhieuNhapDAO;
 import dao.SanPhamDAO;
+import dao.XuatHangDao;
+import model.ChiTietPhieu;
+import model.PhieuXuat;
 import model.SanPham;
 
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.sql.Timestamp;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -25,17 +31,54 @@ public class XuatHang extends javax.swing.JPanel {
     private SanPhamDAO sanPhamDAO = new SanPhamDAO();
     private PhieuNhapDAO phieuNhapDAO = new PhieuNhapDAO();
     private NhaCungCapDAO nhaCungCapDAO = new NhaCungCapDAO();
-    private String maPhieu;
+    private XuatHangDao xuatHangDao = new XuatHangDao();
+    private  String userId;
+    private String userName;
+    //private String maPhieu;
     ArrayList<SanPham> listDanhMucSanPham = new ArrayList<>();
+    private PhieuXuat phieuXuat;
     ArrayList<ChitietPhieuNhapDto> listChiTietPhieu = new ArrayList<>();
-    public XuatHang() {
+    public XuatHang(String userName, String userId) {
         initComponents();
+        if (userId == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng đăng nhập để sử dụng chức năng này");
+            return;
+        }
+        this.userId = userId;
+        this.userName = userName;
+        setPhieuXuat();
+        PdTB.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        ctpnTb.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        setTableDanhMucSanPham();
     }
-
+    private void setPhieuXuat(){
+        phieuXuat = new PhieuXuat();
+        String maPhieu = xuatHangDao.GenerateId();
+        phieuXuat.setMaPhieu(maPhieu);
+        idTxt.setText(maPhieu);
+        phieuXuat.setNguoiTao(userId);
+        userTxt.setText(userName);
+    }
+    public void setCtptable(){
+        DefaultTableModel model = (DefaultTableModel)ctpnTb.getModel();
+        model.setRowCount(0);
+        int i = 1;
+        double tongTien = 0;
+        for (ChitietPhieuNhapDto ctp : listChiTietPhieu) {
+            model.addRow(new Object[]{
+                    i++, ctp.getMaMay(), ctp.getTenSanPham(), ctp.getSoLuong(), ctp.getDonGia()
+            });
+            tongTien += ctp.getSoLuong() * ctp.getDonGia();
+        }
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        String formattedNumber = formatter.format(tongTien);
+        jLabel16.setText(formattedNumber + "đ");
+        phieuXuat.setTongTien(tongTien);
+    }
     public void setTableDanhMucSanPham(){
         try {
             listDanhMucSanPham = sanPhamDAO.selectAll();
-            DefaultTableModel model = (DefaultTableModel)jTable6.getModel();
+            DefaultTableModel model = (DefaultTableModel)PdTB.getModel();
             model.setRowCount(0);
             for (model.SanPham sp : listDanhMucSanPham) {
                 model.addRow(new Object[]{
@@ -59,28 +102,28 @@ public class XuatHang extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jPanel24 = new javax.swing.JPanel();
         jScrollPane6 = new javax.swing.JScrollPane();
-        jTable6 = new javax.swing.JTable();
+        PdTB = new javax.swing.JTable();
         jPanel25 = new javax.swing.JPanel();
         jTextField12 = new javax.swing.JTextField();
         jButton25 = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
-        jTextField13 = new javax.swing.JTextField();
-        jButton26 = new javax.swing.JButton();
+        quantityTxt = new javax.swing.JTextField();
+        addbtn = new javax.swing.JButton();
         jPanel26 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        jTextField14 = new javax.swing.JTextField();
-        jTextField15 = new javax.swing.JTextField();
+        idTxt = new javax.swing.JTextField();
+        userTxt = new javax.swing.JTextField();
         jScrollPane7 = new javax.swing.JScrollPane();
-        jTable7 = new javax.swing.JTable();
+        ctpnTb = new javax.swing.JTable();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
-        jButton27 = new javax.swing.JButton();
+        xuatBtn = new javax.swing.JButton();
         jButton28 = new javax.swing.JButton();
-        jButton29 = new javax.swing.JButton();
-        jButton30 = new javax.swing.JButton();
+        qtyChangebtn = new javax.swing.JButton();
+        delbtn = new javax.swing.JButton();
 
-        jTable6.setModel(new javax.swing.table.DefaultTableModel(
+        PdTB.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -99,7 +142,7 @@ public class XuatHang extends javax.swing.JPanel {
                 return types [columnIndex];
             }
         });
-        jScrollPane6.setViewportView(jTable6);
+        jScrollPane6.setViewportView(PdTB);
 
         jPanel25.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm kiếm"));
 
@@ -129,9 +172,14 @@ public class XuatHang extends javax.swing.JPanel {
 
         jLabel11.setText("Số lượng :");
 
-        jTextField13.setText("1");
+        quantityTxt.setText("1");
 
-        jButton26.setText("Thêm");
+        addbtn.setText("Thêm");
+        addbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addbtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel24Layout = new javax.swing.GroupLayout(jPanel24);
         jPanel24.setLayout(jPanel24Layout);
@@ -142,9 +190,9 @@ public class XuatHang extends javax.swing.JPanel {
                 .addGap(49, 49, 49)
                 .addComponent(jLabel11)
                 .addGap(18, 18, 18)
-                .addComponent(jTextField13, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(quantityTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(74, 74, 74)
-                .addComponent(jButton26, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(addbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jPanel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -157,8 +205,8 @@ public class XuatHang extends javax.swing.JPanel {
                 .addGap(57, 57, 57)
                 .addGroup(jPanel24Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton26))
+                    .addComponent(quantityTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addbtn))
                 .addGap(59, 59, 59))
         );
 
@@ -166,7 +214,11 @@ public class XuatHang extends javax.swing.JPanel {
 
         jLabel14.setText("Người tạo phiếu");
 
-        jTable7.setModel(new javax.swing.table.DefaultTableModel(
+        idTxt.setEnabled(false);
+
+        userTxt.setEnabled(false);
+
+        ctpnTb.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -185,19 +237,39 @@ public class XuatHang extends javax.swing.JPanel {
                 return types [columnIndex];
             }
         });
-        jScrollPane7.setViewportView(jTable7);
+        jScrollPane7.setViewportView(ctpnTb);
 
         jLabel15.setText("Tổng tiền : ");
 
         jLabel16.setText("0đ");
 
-        jButton27.setText("Nhập hàng");
+        xuatBtn.setText("Nhập hàng");
+        xuatBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xuatBtnActionPerformed(evt);
+            }
+        });
 
         jButton28.setText("Nhập Excel");
+        jButton28.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton28ActionPerformed(evt);
+            }
+        });
 
-        jButton29.setText("Sửa số lượng");
+        qtyChangebtn.setText("Sửa số lượng");
+        qtyChangebtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                qtyChangebtnActionPerformed(evt);
+            }
+        });
 
-        jButton30.setText("Xóa sản phẩm");
+        delbtn.setText("Xóa sản phẩm");
+        delbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                delbtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel26Layout = new javax.swing.GroupLayout(jPanel26);
         jPanel26.setLayout(jPanel26Layout);
@@ -210,8 +282,8 @@ public class XuatHang extends javax.swing.JPanel {
                     .addComponent(jLabel14, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE))
                 .addGap(55, 55, 55)
                 .addGroup(jPanel26Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextField14, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
-                    .addComponent(jTextField15))
+                    .addComponent(idTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE)
+                    .addComponent(userTxt))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel26Layout.createSequentialGroup()
                 .addGap(35, 35, 35)
@@ -223,15 +295,15 @@ public class XuatHang extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton27, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(xuatBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(125, 125, 125))
             .addGroup(jPanel26Layout.createSequentialGroup()
                 .addGap(72, 72, 72)
                 .addComponent(jButton28, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(82, 82, 82)
-                .addComponent(jButton29, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(qtyChangebtn, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton30, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(delbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(73, 73, 73))
         );
         jPanel26Layout.setVerticalGroup(
@@ -240,18 +312,18 @@ public class XuatHang extends javax.swing.JPanel {
                 .addGap(22, 22, 22)
                 .addGroup(jPanel26Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField14, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(idTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(51, 51, 51)
                 .addGroup(jPanel26Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField15, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(userTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(57, 57, 57)
                 .addComponent(jScrollPane7)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel26Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton28)
-                    .addComponent(jButton29)
-                    .addComponent(jButton30))
+                    .addComponent(qtyChangebtn)
+                    .addComponent(delbtn))
                 .addGap(61, 61, 61)
                 .addGroup(jPanel26Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel26Layout.createSequentialGroup()
@@ -260,7 +332,7 @@ public class XuatHang extends javax.swing.JPanel {
                             .addComponent(jLabel16))
                         .addGap(30, 30, 30))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel26Layout.createSequentialGroup()
-                        .addComponent(jButton27)
+                        .addComponent(xuatBtn)
                         .addGap(34, 34, 34))))
         );
 
@@ -299,15 +371,151 @@ public class XuatHang extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+    //for excel i suppose
+    private void jButton28ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton28ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton28ActionPerformed
 
+    private void qtyChangebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_qtyChangebtnActionPerformed
+        // TODO add your handling code here:
+        int row = ctpnTb.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        var ctp = listChiTietPhieu.get(row);
+        if (ctp == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm");
+            return;
+        }
+        int sl = showInputDialog(ctp.getSoLuong());
+        if (sl <= 0) {
+            JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0");
+            return;
+        }
+        var product = listDanhMucSanPham.stream().filter(x -> x.getMaMay().equals(ctp.getMaMay())).findFirst().orElse(null);
+        assert product != null;
+        if (sl > product.getSoLuong()) {
+            JOptionPane.showMessageDialog(this, "Số lượng vượt quá số lượng trong kho");
+            return;
+        }
+        ctp.setSoLuong(sl);
+        setCtptable();
+    }//GEN-LAST:event_qtyChangebtnActionPerformed
+
+    private void delbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delbtnActionPerformed
+        // TODO add your handling code here:
+        int row = ctpnTb.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        listChiTietPhieu.remove(row);
+        setCtptable();
+    }//GEN-LAST:event_delbtnActionPerformed
+
+    private void xuatBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xuatBtnActionPerformed
+        // TODO add your handling code here:
+        if (listChiTietPhieu.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        ArrayList<ChiTietPhieu> list = new ArrayList<>();
+        phieuXuat.setThoiGianTao(new Timestamp(System.currentTimeMillis()));
+        for (ChitietPhieuNhapDto ctp : listChiTietPhieu) {
+            list.add(ctp.downgrade());
+        }
+        phieuXuat.setCTPhieu(list);
+        if(xuatHangDao.AddPhieuXuat(phieuXuat)){
+            JOptionPane.showMessageDialog(this, "Xuất hàng thành công");
+            setPhieuXuat();
+            listChiTietPhieu.clear();
+            setCtptable();
+            setTableDanhMucSanPham();
+        }
+        else{
+            JOptionPane.showMessageDialog(this, "Xuất hàng thất bại");
+        }
+    }//GEN-LAST:event_xuatBtnActionPerformed
+
+    private void addbtnActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
+        int row = PdTB.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        var product = listDanhMucSanPham.get(row);
+        if (product == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm");
+            return;
+        }
+
+        int soLuong;
+        try {
+            soLuong = Integer.parseInt(quantityTxt.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Số lượng không hợp lệ");
+            quantityTxt.setText("1");
+            return;
+        }
+
+        if (soLuong <= 0) {
+            JOptionPane.showMessageDialog(this, "Số lượng phải lớn hơn 0");
+            return;
+        }
+
+        if (soLuong > product.getSoLuong()) {
+            JOptionPane.showMessageDialog(this, "Số lượng vượt quá số lượng trong kho");
+            quantityTxt.setText("1");
+            return;
+        }
+        for (ChitietPhieuNhapDto ctp : listChiTietPhieu) {
+            if (ctp.getMaMay().equals(product.getMaMay())) {
+                int totalQuantity = ctp.getSoLuong() + soLuong;
+                if (totalQuantity > product.getSoLuong()) {
+                    JOptionPane.showMessageDialog(this, "Số lượng vượt quá số lượng trong kho");
+                    ctp.setSoLuong(product.getSoLuong());
+                    setCtptable();
+                    return;
+                }
+                ctp.setSoLuong(totalQuantity);
+                setCtptable();
+                return;
+            }
+        }
+        ChitietPhieuNhapDto newCt = new ChitietPhieuNhapDto(
+                phieuXuat.getMaPhieu(),
+                product.getMaMay(),
+                soLuong,
+                product.getGia(),
+                product.getTenMay()
+        );
+        listChiTietPhieu.add(newCt);
+        setCtptable();
+    }
+
+    public int showInputDialog(int quantity) {
+        String input = JOptionPane.showInputDialog(null, "Enter a quantity:", String.valueOf(quantity));
+        if (input == null) {
+            return -1;
+        }
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Số lượng không hợp lệ");
+            return -1;
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable PdTB;
+    private javax.swing.JButton addbtn;
+    private javax.swing.JTable ctpnTb;
+    private javax.swing.JButton delbtn;
+    private javax.swing.JTextField idTxt;
     private javax.swing.JButton jButton25;
-    private javax.swing.JButton jButton26;
-    private javax.swing.JButton jButton27;
     private javax.swing.JButton jButton28;
-    private javax.swing.JButton jButton29;
-    private javax.swing.JButton jButton30;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
@@ -319,11 +527,10 @@ public class XuatHang extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel26;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
-    private javax.swing.JTable jTable6;
-    private javax.swing.JTable jTable7;
     private javax.swing.JTextField jTextField12;
-    private javax.swing.JTextField jTextField13;
-    private javax.swing.JTextField jTextField14;
-    private javax.swing.JTextField jTextField15;
+    private javax.swing.JButton qtyChangebtn;
+    private javax.swing.JTextField quantityTxt;
+    private javax.swing.JTextField userTxt;
+    private javax.swing.JButton xuatBtn;
     // End of variables declaration//GEN-END:variables
 }

@@ -33,7 +33,7 @@ public class XuatHangDao {
     }
 
     public boolean AddPhieuXuat(PhieuXuat px) {
-        String query = "insert into phieuxuat values(?,?,?,?)";
+        String query = "INSERT INTO phieuxuat VALUES(?,?,?,?)";
         try {
             conn.setAutoCommit(false);
             ps = conn.prepareStatement(query);
@@ -41,21 +41,36 @@ public class XuatHangDao {
             ps.setTimestamp(2, px.getThoiGianTao());
             ps.setString(3, px.getNguoiTao());
             ps.setDouble(4, px.getTongTien());
-            if(ps.executeUpdate() > 0 && SaveCtPn(px.getCTPhieu())) {
+            if (ps.executeUpdate() > 0 && SaveCtPn(px.getCTPhieu())) {
                 conn.commit();
                 return true;
+            } else {
+                conn.rollback();
             }
-            conn.rollback();
-        } catch (Exception e) {
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             e.printStackTrace();
+        } finally {
+            try {
+                conn.setAutoCommit(true);
+//                if (ps != null) ps.close();
+//                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return false;
     }
 
+
     public boolean SaveCtPn(ArrayList<ChiTietPhieu> list) {
         try {
             var query = "insert into chitietphieuxuat values(?,?,?,?)";
-            var pdquery = "update maytinh set soLuong = soLuong - ? where maMay = ?";
+            var pdQuery = "update maytinh set soLuong = soLuong - ? where maMay = ?";
             ps = conn.prepareStatement(query);
             for (var i : list) {
                 ps.setString(1, i.getMaPhieu());
@@ -63,12 +78,11 @@ public class XuatHangDao {
                 ps.setInt(3, i.getSoLuong());
                 ps.setDouble(4, i.getDonGia());
                 if (ps.executeUpdate() > 0) {
-                    ps = conn.prepareStatement(pdquery);
-                    ps.setInt(1, i.getSoLuong());
-                    ps.setString(2, i.getMaMay());
-                    if (ps.executeUpdate() <= 0) {
+                    var psp = conn.prepareStatement(pdQuery);
+                    psp.setInt(1, i.getSoLuong());
+                    psp.setString(2, i.getMaMay());
+                    if (psp.executeUpdate() <= 0) {
                         return false;
-
                     }
                 } else {
                     return false;

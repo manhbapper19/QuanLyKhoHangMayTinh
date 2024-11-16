@@ -28,13 +28,16 @@ import view.XuatHang;
  * @author ASUS
  */
 public class ChuyenManHinhController {
-
+    private String username;
+    private String userId;
     private JPanel root;
     private String kindSelected = "";
     private List<DanhMucBean> listItem = null;
 
-    public ChuyenManHinhController(JPanel jpnRoot) {
+    public ChuyenManHinhController(JPanel jpnRoot, String username, String userId) {
         this.root = jpnRoot;
+        this.username = username;
+        this.userId = userId;
     }
 
     public void setView(JPanel jpnItem, JLabel jlbItem) {
@@ -85,7 +88,7 @@ public class ChuyenManHinhController {
                     node = new PhieuNhap();
                     break;
                 case "XuatHang":
-                    node = new XuatHang();
+                    node = new XuatHang(username, userId);
                     break;
                 case "PhieuXuat":
                     node = new PhieuXuat();

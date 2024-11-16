@@ -1,5 +1,6 @@
 package dao;
 
+import dao.Dto.UserDetail;
 import database.JDBC;
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,7 +9,6 @@ import java.util.logging.Logger;
 import javax.swing.*;
 
 import model.Account;
-
 public class AccountsDAO implements DAOInterface<Account>{
     Connection conn = JDBC.getJDBCConnection();
     PreparedStatement ps;
@@ -63,7 +63,22 @@ public class AccountsDAO implements DAOInterface<Account>{
         }
         return false;
     }
-
+    public UserDetail login(String userName, String password) {
+        String sql = "SELECT * from account where userName = ? and password = ?";
+        try {
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, userName);
+            ps.setString(2, password);
+            rs = ps.executeQuery();
+            if (rs.next()) {
+                return new UserDetail(rs.getString("fullName"), rs.getString("userName"));
+            }
+            return null;
+        } catch (SQLException ex) {
+            Logger.getLogger(AccountsDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
     //chekc mật khẩu
     public boolean checkPassword(String password){
         String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$";

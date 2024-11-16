@@ -1,6 +1,8 @@
 package view;
 
 import dao.AccountsDAO;
+import dao.Dto.UserDetail;
+
 import javax.swing.JOptionPane;
 
 public class Login extends javax.swing.JDialog {
@@ -154,9 +156,13 @@ public class Login extends javax.swing.JDialog {
         if(!accountsDAO.checkNull(txtUsername, txtPassword)){
             return;
         };
-        if(accountsDAO.checkLogin(txtUsername.getText(), txtPassword.getText())){
+        UserDetail login =accountsDAO.login(txtUsername.getText(), txtPassword.getText());
+//        if(accountsDAO.checkLogin(txtUsername.getText(), txtPassword.getText())){
+//            this.dispose();
+//            new HomeFrm().setVisible(true);
+        if(login != null){
             this.dispose();
-            new HomeFrm().setVisible(true);
+            new HomeFrm(login.getUserName(),login.getId()).setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Sai tên đăng nhập hoặc mật khẩu!");
         }

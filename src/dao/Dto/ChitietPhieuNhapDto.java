@@ -18,4 +18,7 @@ public class ChitietPhieuNhapDto extends ChiTietPhieu {
     public void setTenSanPham(String tenSanPham) {
         TenSanPham = tenSanPham;
     }
+    public ChiTietPhieu downgrade(){
+        return new ChiTietPhieu(getMaPhieu(), getMaMay(), getSoLuong(), getDonGia());
+    }
 }
