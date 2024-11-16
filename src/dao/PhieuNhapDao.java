@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-
+//add note
 public class PhieuNhapDAO {
     Connection conn = JDBC.getJDBCConnection();
     PreparedStatement ps;
