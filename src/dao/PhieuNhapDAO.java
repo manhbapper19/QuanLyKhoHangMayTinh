@@ -42,10 +42,10 @@ public class PhieuNhapDAO {
                 ps.setInt(3, i.getSoLuong());
                 ps.setDouble(4, i.getDonGia());
                 if (ps.executeUpdate() > 0) {
-                    ps = conn.prepareStatement(pdquery);
-                    ps.setInt(1, i.getSoLuong());
-                    ps.setString(2, i.getMaMay());
-                    if (ps.executeUpdate() <= 0) {
+                    PreparedStatement psUpdate = conn.prepareStatement(pdquery);
+                    psUpdate.setInt(1, i.getSoLuong());
+                    psUpdate.setString(2, i.getMaMay());
+                    if (psUpdate.executeUpdate() <= 0) {
                         return false;
                     }
                 } else {
