@@ -3,7 +3,6 @@ package dao;
 import database.JDBC;
 import entities.ImportDetailEntity;
 import entities.ImportEntity;
-import entities.ProductEntity;
 import model.PhieuNhap;
 import view.ChiTietPhieuNhap;
 

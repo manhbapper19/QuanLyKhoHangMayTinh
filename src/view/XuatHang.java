@@ -4,6 +4,15 @@
  */
 package view;
 
+import dao.Dto.ChitietPhieuNhapDto;
+import dao.NhaCungCapDAO;
+import dao.PhieuNhapDAO;
+import dao.SanPhamDAO;
+import model.SanPham;
+
+import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
+
 /**
  *
  * @author ASUS
@@ -13,8 +22,29 @@ public class XuatHang extends javax.swing.JPanel {
     /**
      * Creates new form XuatHang
      */
+    private SanPhamDAO sanPhamDAO = new SanPhamDAO();
+    private PhieuNhapDAO phieuNhapDAO = new PhieuNhapDAO();
+    private NhaCungCapDAO nhaCungCapDAO = new NhaCungCapDAO();
+    private String maPhieu;
+    ArrayList<SanPham> listDanhMucSanPham = new ArrayList<>();
+    ArrayList<ChitietPhieuNhapDto> listChiTietPhieu = new ArrayList<>();
     public XuatHang() {
         initComponents();
+    }
+
+    public void setTableDanhMucSanPham(){
+        try {
+            listDanhMucSanPham = sanPhamDAO.selectAll();
+            DefaultTableModel model = (DefaultTableModel)jTable6.getModel();
+            model.setRowCount(0);
+            for (model.SanPham sp : listDanhMucSanPham) {
+                model.addRow(new Object[]{
+                        sp.getMaMay(), sp.getTenMay(), sp.getSoLuong(),sp.getGia()
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
