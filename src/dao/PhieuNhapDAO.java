@@ -223,6 +223,7 @@ public class PhieuNhapDAO {
                 ps.setString(1, i.getMaPhieu());
                 ps.setString(2, i.getMaMay());
                 if (ps.executeUpdate() <= 0){
+                    //ahh
                     return false;
                 }
                 if(handleQuantityChange(i.getMaMay(), false, i.getSoLuong())){
