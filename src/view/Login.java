@@ -1,13 +1,13 @@
 package view;
 
+import controller.BCrypt;
 import dao.AccountsDAO;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 public class Login extends javax.swing.JDialog {
     AccountsDAO accountsDAO = new AccountsDAO();
-    /**
-     * Creates new form logins
-     */
+
     public Login(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -150,21 +150,23 @@ public class Login extends javax.swing.JDialog {
 
     // xử lý sự kiện đăng nhập
     private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
-        // TODO add your handling code here:
-        if(!accountsDAO.checkNull(txtUsername, txtPassword)){
+        if (!accountsDAO.checkNull(txtUsername, txtPassword)) {
             return;
-        };
-        if(accountsDAO.checkLogin(txtUsername.getText(), txtPassword.getText())){
+        }
+        String username = txtUsername.getText();
+        String password = new String(txtPassword.getPassword());
+        // Retrieve the hashed password from the database
+        String storedHashedPassword = accountsDAO.checkLogin(username);
+        // Verify the password
+        if (storedHashedPassword != null && BCrypt.checkpw(password, storedHashedPassword)) {
             this.dispose();
+            JOptionPane.showMessageDialog(null, "Đăng nhập thành công!");
             new HomeFrm().setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Sai tên đăng nhập hoặc mật khẩu!");
         }
     }//GEN-LAST:event_btnLoginActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

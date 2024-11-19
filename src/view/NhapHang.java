@@ -100,11 +100,11 @@ public class NhapHang extends javax.swing.JPanel {
             String id = phieuNhapDAO.taoMaPhieu();
             phieuNhap.setMaPhieu(id);
             maPhieu = id;
-            phieuNhap.setNguoiTao("emilia");
+            phieuNhap.setNguoiTao("admin");
             phieuNhap.setThoiGianTao(new Timestamp(System.currentTimeMillis()));
             jTextField5.enable(false);
             jTextField5.setText(id);
-            jTextField6.setText("emilia");
+            jTextField6.setText("admin");
             jTextField6.enable(false);
 
         }catch (Exception e){

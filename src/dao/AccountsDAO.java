@@ -14,22 +14,22 @@ public class AccountsDAO implements DAOInterface<Account>{
     PreparedStatement ps;
     ResultSet rs;
     // INSERT data vao SQL
-    public void insertData(String fullName, String user, String password, String email, String phone){
-        String sql = "INSERT INTO account values (?,?,?,?,?)";
-        try {
-            ps = conn.prepareStatement(sql);
-            ps.setString(1, fullName);
-            ps.setString(2, user);
-            ps.setString(3, password);
-            ps.setString(4, email);
-            ps.setString(5, phone);
-            if(ps.executeUpdate() > 0){
-//                JOptionPane.showMessageDialog(null, "Bạn đã đăng ký thành công!");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(AccountsDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+//    public void insertData(String fullName, String user, String password, String email, String phone){
+//        String sql = "INSERT INTO account values (?,?,?,?,?)";
+//        try {
+//            ps = conn.prepareStatement(sql);
+//            ps.setString(1, fullName);
+//            ps.setString(2, user);
+//            ps.setString(3, password);
+//            ps.setString(4, email);
+//            ps.setString(5, phone);
+//            if(ps.executeUpdate() > 0){
+////                JOptionPane.showMessageDialog(null, "Bạn đã đăng ký thành công!");
+//            }
+//        } catch (SQLException ex) {
+//            Logger.getLogger(AccountsDAO.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
     // kiểm tra xem userName tồn tại hay chưa
     public boolean checkUsername(String user){
         String sql = "SELECT userName from account where userName = ?";
@@ -43,31 +43,17 @@ public class AccountsDAO implements DAOInterface<Account>{
         }
         return false;
     }
-
-    // check xác nhận mật khẩu và mật khẩu
-    public boolean checkPassword(String password, String confirmPassword){
-        if(password.equals(confirmPassword)) return true;
-        return false;
-    }
-    // check login
-    public boolean checkLogin(String userName, String password){
-        String sql = "SELECT * from account where userName = ? and password = ?";
-        try {
-            ps = conn.prepareStatement(sql);
-            ps.setString(1, userName);
-            ps.setString(2, password);
-            rs = ps.executeQuery();
-            if(rs.next()) return true;
-        } catch (SQLException ex) {
-            Logger.getLogger(AccountsDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
-    }
-
+    
     //chekc mật khẩu
     public boolean checkPassword(String password){
         String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$";
         if(password.matches(regex)) return true;
+        return false;
+    }
+    
+    // check xác nhận mật khẩu và mật khẩu
+    public boolean checkPassword1(String password, String confirmPassword){
+        if(password.equals(confirmPassword)) return true;
         return false;
     }
 
@@ -83,6 +69,23 @@ public class AccountsDAO implements DAOInterface<Account>{
         String regex = "0[0-9]{9}";
         if(phone.matches(regex)) return true;
         return false;
+    }
+    
+    // check login
+    public String checkLogin(String username) {
+        String sql = "SELECT password FROM account WHERE userName = ?";
+        try (Connection conn = JDBC.getJDBCConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("password");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     
     // check điền đầy đủ thông tin
