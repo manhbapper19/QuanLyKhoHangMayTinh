@@ -9,6 +9,8 @@ import model.NhaCungCap;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 /**
@@ -38,10 +40,10 @@ public class PhieuNhap extends javax.swing.JPanel {
 
         jPanel1 = new javax.swing.JPanel();
         jPanel22 = new javax.swing.JPanel();
-        jTextField8 = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jTextField9 = new javax.swing.JTextField();
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        jDateChooser2 = new com.toedter.calendar.JDateChooser();
         jPanel23 = new javax.swing.JPanel();
         jTextField10 = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
@@ -67,6 +69,18 @@ public class PhieuNhap extends javax.swing.JPanel {
 
         jLabel8.setText("Đến");
 
+        jDateChooser1.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jDateChooser1PropertyChange(evt);
+            }
+        });
+
+        jDateChooser2.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jDateChooser2PropertyChange(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel22Layout = new javax.swing.GroupLayout(jPanel22);
         jPanel22.setLayout(jPanel22Layout);
         jPanel22Layout.setHorizontalGroup(
@@ -75,30 +89,53 @@ public class PhieuNhap extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44)
+                .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(65, 65, 65)
                 .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
-                .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(178, Short.MAX_VALUE))
+                .addGap(52, 52, 52)
+                .addComponent(jDateChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(69, Short.MAX_VALUE))
         );
         jPanel22Layout.setVerticalGroup(
             jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel22Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
-                .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8)
-                    .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jDateChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel22Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jLabel7)))
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         jPanel23.setBorder(javax.swing.BorderFactory.createTitledBorder("Lọc theo giá"));
 
+        jTextField10.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jTextField10PropertyChange(evt);
+            }
+        });
+        jTextField10.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField10KeyReleased(evt);
+            }
+        });
+
         jLabel9.setText("Từ");
 
         jLabel10.setText("Đến");
+
+        jTextField11.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                jTextField11PropertyChange(evt);
+            }
+        });
+        jTextField11.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextField11KeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel23Layout = new javax.swing.GroupLayout(jPanel23);
         jPanel23.setLayout(jPanel23Layout);
@@ -295,7 +332,7 @@ public class PhieuNhap extends javax.swing.JPanel {
                     .addComponent(jPanel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel23, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
@@ -315,21 +352,60 @@ public class PhieuNhap extends javax.swing.JPanel {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
-    public  void SetDataToTbl(){
-        list = phieuNhapDAO.getList();
+    public void SetDataToTbl() {
+        Timestamp start;
+        Timestamp end;
+        double pstart = 0;
+        double pend = Double.MAX_VALUE;
+
+        if (!jTextField10.getText().equals("")) {
+            try {
+                pstart = Double.parseDouble(jTextField10.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Giá không hợp lệ");
+                return;
+            }
+        }
+
+        if (!jTextField11.getText().equals("")) {
+            try {
+                pend = Double.parseDouble(jTextField11.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Giá không hợp lệ");
+                return;
+            }
+        }
+
+        if (jDateChooser1.getDate() == null) {
+            start = new java.sql.Timestamp(0);
+        } else {
+            start = new java.sql.Timestamp(jDateChooser1.getDate().getTime());
+        }
+
+        if (jDateChooser2.getDate() == null) {
+            end = new java.sql.Timestamp(System.currentTimeMillis());
+        } else {
+            end = new java.sql.Timestamp(jDateChooser2.getDate().getTime());
+        }
+
+        if (start.after(end)) {
+            JOptionPane.showMessageDialog(this, "Ngày bắt đầu không được lớn hơn ngày kết thúc");
+            return;
+        }
+
+        list = phieuNhapDAO.getList(start, end, pstart, pend);
         var model = (DefaultTableModel) jTable5.getModel();
         model.setRowCount(0);
         for (var i : list) {
             model.addRow(new Object[]{
-                model.getRowCount() + 1,
-                i.getMaPhieu(),
-                i.getNhaCungCap(),
-                i.getNguoiTao(),
-                i.getThoiGianTao(),
-                i.getTongTien()
+                    model.getRowCount() + 1,
+                    i.getMaPhieu(),
+                    i.getNhaCungCap(),
+                    i.getNguoiTao(),
+                    i.getThoiGianTao(),
+                    i.getTongTien()
             });
         }
-
     }
     private void btnAddProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddProductActionPerformed
          // TODO add your handling code here:
@@ -370,6 +446,37 @@ public class PhieuNhap extends javax.swing.JPanel {
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jDateChooser1PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser1PropertyChange
+        // TODO add your handling code here:
+        SetDataToTbl();
+    }//GEN-LAST:event_jDateChooser1PropertyChange
+
+    private void jDateChooser2PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jDateChooser2PropertyChange
+        SetDataToTbl();        // TODO add your handling code here:
+    }//GEN-LAST:event_jDateChooser2PropertyChange
+
+    private void jTextField10PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTextField10PropertyChange
+        // TODO add your handling code here:
+        System.out.println(jTextField1.getText());
+        SetDataToTbl();
+    }//GEN-LAST:event_jTextField10PropertyChange
+
+    private void jTextField11PropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_jTextField11PropertyChange
+        // TODO add your handling code here:
+        System.out.println(jTextField1.getText());
+        SetDataToTbl();
+    }//GEN-LAST:event_jTextField11PropertyChange
+
+    private void jTextField10KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField10KeyReleased
+        // TODO add your handling code here:
+        SetDataToTbl();
+    }//GEN-LAST:event_jTextField10KeyReleased
+
+    private void jTextField11KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField11KeyReleased
+        // TODO add your handling code here:
+        SetDataToTbl();
+    }//GEN-LAST:event_jTextField11KeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddProduct;
@@ -379,6 +486,8 @@ public class PhieuNhap extends javax.swing.JPanel {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JComboBox<String> jComboBox1;
+    private com.toedter.calendar.JDateChooser jDateChooser1;
+    private com.toedter.calendar.JDateChooser jDateChooser2;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -394,7 +503,5 @@ public class PhieuNhap extends javax.swing.JPanel {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField10;
     private javax.swing.JTextField jTextField11;
-    private javax.swing.JTextField jTextField8;
-    private javax.swing.JTextField jTextField9;
     // End of variables declaration//GEN-END:variables
 }

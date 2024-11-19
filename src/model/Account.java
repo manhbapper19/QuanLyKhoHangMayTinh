@@ -7,17 +7,35 @@ public class Account {
     private String fullName;
     private String password;
     private String email;
-    private String phone;
+    //private String phone;
+    private String role;
+    private int Status;
     public Account() {
         super();
     }
 
-    public Account(String userName, String fullName, String password, String email, String phone) {
+    public Account(String userName, String fullName, String password, String email) {
         this.userName = userName;
         this.fullName = fullName;
         this.password = password;
         this.email = email;
-        this.phone = phone;
+        //this.phone = phone;
+    }
+
+    public int getStatus() {
+        return Status;
+    }
+
+    public void setStatus(int status) {
+        Status = status;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getUserName() {
@@ -52,17 +70,17 @@ public class Account {
         this.email = email;
     }
 
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+//    public String getPhone() {
+//        return phone;
+//    }
+//
+//    public void setPhone(String phone) {
+//        this.phone = phone;
+//    }
 
     @Override
     public String toString() {
-        return "Account{" + "userName=" + userName + ", fullName=" + fullName + ", password=" + password + ", email=" + email + ", phone=" + phone + '}';
+        return "Account{" + "userName=" + userName + ", fullName=" + fullName + ", password=" + password + ", email=" + email +'}';
     }
     
 }

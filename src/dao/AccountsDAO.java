@@ -183,7 +183,7 @@ public class AccountsDAO implements DAOInterface<Account>{
                 acc.setUserName(rs.getString("userName"));
                 acc.setFullName(rs.getString("fullName"));
                 acc.setEmail(rs.getString("email"));
-                acc.setPhone(rs.getString("phone"));
+                //acc.setPhone(rs.getString("phone"));
                 list.add(acc);
             }
         } catch (Exception e){

@@ -8,6 +8,7 @@ import model.PhieuNhap;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 //add note
 public class PhieuNhapDAO {
@@ -129,11 +130,15 @@ public class PhieuNhapDAO {
         }
         return null;
     }
-    public ArrayList<PhieuNhap> getList(){
+    public ArrayList<PhieuNhap> getList(Timestamp START, Timestamp END, double MIN, double MAX){
         ArrayList<PhieuNhap> list = new ArrayList<>();
-        var query = "select * from phieunhap order by thoiGianTao desc";
+        var query = "select * from phieunhap where phieunhap.thoiGianTao between ? and ? and tongTien between ? and ? order by thoiGianTao desc";
         try {
             ps = conn.prepareStatement(query);
+            ps.setTimestamp(1, START);
+            ps.setTimestamp(2, END);
+            ps.setDouble(3, MIN);
+            ps.setDouble(4, MAX);
             rs = ps.executeQuery();
             while (rs.next()){
                 PhieuNhap pn = new PhieuNhap();

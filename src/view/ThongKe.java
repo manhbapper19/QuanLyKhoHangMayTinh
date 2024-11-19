@@ -4,6 +4,35 @@
  */
 package view;
 
+import dao.ThongKeDao;
+import java.awt.Color;
+import java.awt.Font;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.sql.Timestamp;
+import java.text.NumberFormat;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.CategoryItemLabelGenerator;
+import org.jfree.chart.labels.ItemLabelAnchor;
+import org.jfree.chart.labels.ItemLabelPosition;
+import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.ui.TextAnchor;
+
 /**
  *
  * @author ASUS
@@ -13,8 +42,241 @@ public class ThongKe extends javax.swing.JPanel {
     /**
      * Creates new form ThongKe
      */
-    public ThongKe() {
+    private ThongKeDao thongKeDao = new ThongKeDao();
+        public ThongKe() {
         initComponents();
+        setPdtbl();
+        setTbPhieu();
+        setTblAccount();
+        SetGraphNhap();
+        SetGraphXuat();
+    }
+//    public void SetGraph() {
+//        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+//        Map<String, Double> data = thongKeDao.getNhapData();
+//        for (Map.Entry<String, Double> entry : data.entrySet()) {
+//            dataset.addValue(entry.getValue(), "Nhập", entry.getKey());
+//        }
+//
+//        JFreeChart chart = ChartFactory.createBarChart(
+//                "Chi phí nhập hàng theo tháng",
+//                "Tháng",
+//                "Giá trị",
+//                dataset,
+//                PlotOrientation.VERTICAL,
+//                false,
+//                true,
+//                false
+//        );
+//
+//        CategoryPlot plot = chart.getCategoryPlot();
+//        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+//
+//        // Điều chỉnh style của cột
+//        renderer.setMaximumBarWidth(0.05);  // Giảm độ rộng cột
+//        renderer.setItemMargin(0.01);       // Giảm khoảng cách giữa các cột
+//
+//        // Tùy chỉnh màu sắc cho cột
+//        renderer.setSeriesPaint(0, Color.BLUE);
+//
+//        // Tùy chỉnh trục x
+//        CategoryAxis xAxis = plot.getDomainAxis();
+//        xAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);  // Xoay nhãn
+//        xAxis.setTickLabelFont(new Font("SansSerif", Font.PLAIN, 12));  // Font chữ
+//        xAxis.setLowerMargin(0.01);   // Margin trái
+//        xAxis.setUpperMargin(0.01);   // Margin phải
+//
+//        // Tùy chỉnh trục y
+//        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+//        yAxis.setTickLabelFont(new Font("SansSerif", Font.PLAIN, 12));
+//
+//        // Thêm giá trị lên đỉnh cột
+//
+//        ChartPanel chartPanel = new ChartPanel(chart);
+//        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
+//        // Thiết lập kích thước tối thiểu và tối đa
+//        chartPanel.setMinimumDrawWidth(300);
+//        chartPanel.setMinimumDrawHeight(200);
+//        chartPanel.setMaximumDrawWidth(1200);
+//        chartPanel.setMaximumDrawHeight(800);
+//
+//        jPanel3.setLayout(new java.awt.BorderLayout());
+//        jPanel3.removeAll();
+//        jPanel3.add(chartPanel, java.awt.BorderLayout.CENTER);
+//        jPanel3.revalidate();
+//        jPanel3.repaint();
+//    }
+public void SetGraphXuat() {
+    // Tạo dataset
+    DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+    HashMap<String, Double> data = thongKeDao.getNhapData();
+    for (HashMap.Entry<String, Double> entry : data.entrySet()) {
+        dataset.addValue(entry.getValue(), "Nhập", entry.getKey());
+    }
+
+    // Tạo biểu đồ
+    JFreeChart chart = ChartFactory.createBarChart(
+            "Chi phí nhập hàng theo tháng",
+            "Tháng",
+            "Giá trị",
+            dataset,
+            PlotOrientation.VERTICAL,
+            false,
+            true,
+            false
+    );
+
+    // Tùy chỉnh plot
+    CategoryPlot plot = chart.getCategoryPlot();
+    plot.setBackgroundPaint(Color.WHITE);
+    plot.setDomainGridlinePaint(Color.GRAY);
+    plot.setRangeGridlinePaint(Color.GRAY);
+
+    // Tùy chỉnh renderer
+    BarRenderer renderer = (BarRenderer) plot.getRenderer();
+    renderer.setMaximumBarWidth(0.05);
+    renderer.setItemMargin(0.01);
+    renderer.setSeriesPaint(0, Color.BLUE);
+
+    // Thêm label vào cột
+    // Sử dụng CategoryItemLabelGenerator thay thế
+    CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator() {
+        @Override
+        public String generateLabel(CategoryDataset dataset, int row, int column) {
+            //return "Tháng " + dataset.getColumnKey(column).toString();
+            //return dataset.getValue(row, column).toString();
+            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+            return currencyFormat.format(dataset.getValue(row, column));
+        }
+    };
+    renderer.setBaseItemLabelGenerator(generator);
+    renderer.setBaseItemLabelsVisible(true);
+    renderer.setBaseItemLabelPaint(Color.BLACK);
+    renderer.setBaseItemLabelFont(new Font("SansSerif", Font.BOLD, 12));
+
+    // Đặt vị trí của label
+    ItemLabelPosition position = new ItemLabelPosition(
+            ItemLabelAnchor.OUTSIDE12,
+            TextAnchor.BOTTOM_CENTER
+    );
+    renderer.setBasePositiveItemLabelPosition(position);
+
+    // Tùy chỉnh trục x
+    CategoryAxis xAxis = plot.getDomainAxis();
+    xAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+    xAxis.setTickLabelFont(new Font("SansSerif", Font.PLAIN, 12));
+    xAxis.setLowerMargin(0.01);
+    xAxis.setUpperMargin(0.01);
+
+    // Tùy chỉnh trục y
+    NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+    yAxis.setTickLabelFont(new Font("SansSerif", Font.PLAIN, 12));
+
+    // Format số trên trục y
+    NumberFormat numberFormat = NumberFormat.getInstance();
+    numberFormat.setMaximumFractionDigits(0);
+    yAxis.setNumberFormatOverride(numberFormat);
+
+    // Tạo ChartPanel
+    ChartPanel chartPanel = new ChartPanel(chart);
+    chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
+    chartPanel.setMinimumDrawWidth(300);
+    chartPanel.setMinimumDrawHeight(200);
+    chartPanel.setMaximumDrawWidth(1200);
+    chartPanel.setMaximumDrawHeight(800);
+
+    // Thêm vào panel
+    jPanel3.setLayout(new java.awt.BorderLayout());
+    jPanel3.removeAll();
+    jPanel3.add(chartPanel, java.awt.BorderLayout.CENTER);
+    jPanel3.revalidate();
+    jPanel3.repaint();
+}
+    public void SetGraphNhap() {
+        // Tạo dataset
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        HashMap<String, Double> data = thongKeDao.getXuatData();
+        for (HashMap.Entry<String, Double> entry : data.entrySet()) {
+            dataset.addValue(entry.getValue(), "Nhập", entry.getKey());
+        }
+
+        // Tạo biểu đồ
+        JFreeChart chart = ChartFactory.createBarChart(
+                "Doanh thu xuất hàng theo tháng",
+                "Tháng",
+                "Giá trị",
+                dataset,
+                PlotOrientation.VERTICAL,
+                false,
+                true,
+                false
+        );
+
+        // Tùy chỉnh plot
+        CategoryPlot plot = chart.getCategoryPlot();
+        plot.setBackgroundPaint(Color.WHITE);
+        plot.setDomainGridlinePaint(Color.GRAY);
+        plot.setRangeGridlinePaint(Color.GRAY);
+
+        // Tùy chỉnh renderer
+        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setMaximumBarWidth(0.05);
+        renderer.setItemMargin(0.01);
+        renderer.setSeriesPaint(0, Color.RED);
+
+        // Thêm label vào cột
+        // Sử dụng CategoryItemLabelGenerator thay thế
+        CategoryItemLabelGenerator generator = new StandardCategoryItemLabelGenerator() {
+            @Override
+            public String generateLabel(CategoryDataset dataset, int row, int column) {
+                //return "Tháng " + dataset.getColumnKey(column).toString();
+                //return dataset.getValue(row, column).toString();
+                NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+                return currencyFormat.format(dataset.getValue(row, column));
+            }
+        };
+        renderer.setBaseItemLabelGenerator(generator);
+        renderer.setBaseItemLabelsVisible(true);
+        renderer.setBaseItemLabelPaint(Color.BLACK);
+        renderer.setBaseItemLabelFont(new Font("SansSerif", Font.BOLD, 12));
+
+        // Đặt vị trí của label
+        ItemLabelPosition position = new ItemLabelPosition(
+                ItemLabelAnchor.OUTSIDE12,
+                TextAnchor.BOTTOM_CENTER
+        );
+        renderer.setBasePositiveItemLabelPosition(position);
+
+        // Tùy chỉnh trục x
+        CategoryAxis xAxis = plot.getDomainAxis();
+        xAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
+        xAxis.setTickLabelFont(new Font("SansSerif", Font.PLAIN, 12));
+        xAxis.setLowerMargin(0.01);
+        xAxis.setUpperMargin(0.01);
+
+        // Tùy chỉnh trục y
+        NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+        yAxis.setTickLabelFont(new Font("SansSerif", Font.PLAIN, 12));
+
+        // Format số trên trục y
+        NumberFormat numberFormat = NumberFormat.getInstance();
+        numberFormat.setMaximumFractionDigits(0);
+        yAxis.setNumberFormatOverride(numberFormat);
+
+        // Tạo ChartPanel
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new java.awt.Dimension(800, 600));
+        chartPanel.setMinimumDrawWidth(300);
+        chartPanel.setMinimumDrawHeight(200);
+        chartPanel.setMaximumDrawWidth(1200);
+        chartPanel.setMaximumDrawHeight(800);
+
+        // Thêm vào panel
+        jPanel4.setLayout(new java.awt.BorderLayout());
+        jPanel4.removeAll();
+        jPanel4.add(chartPanel, java.awt.BorderLayout.CENTER);
+        jPanel4.revalidate();
+        jPanel4.repaint();
     }
 
     /**
@@ -26,6 +288,7 @@ public class ThongKe extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jFreeChartResources1 = new org.jfree.chart.resources.JFreeChartResources();
         jPanel1 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         jPanel9 = new javax.swing.JPanel();
@@ -84,6 +347,8 @@ public class ThongKe extends javax.swing.JPanel {
         jComboBox4 = new javax.swing.JComboBox<>();
         jTextField5 = new javax.swing.JTextField();
         jButton7 = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
 
         jPanel8.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -384,10 +649,32 @@ public class ThongKe extends javax.swing.JPanel {
 
             },
             new String [] {
-
+                "STT ", "Mã phiếu nhập", "Người tạo", "Thời Gian Tạo", "Tổng Tiền"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Double.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(tblPhieuNhap);
+        if (tblPhieuNhap.getColumnModel().getColumnCount() > 0) {
+            tblPhieuNhap.getColumnModel().getColumn(0).setResizable(false);
+            tblPhieuNhap.getColumnModel().getColumn(1).setResizable(false);
+            tblPhieuNhap.getColumnModel().getColumn(2).setResizable(false);
+            tblPhieuNhap.getColumnModel().getColumn(3).setResizable(false);
+            tblPhieuNhap.getColumnModel().getColumn(4).setResizable(false);
+        }
 
         jPanel5.setBackground(new java.awt.Color(255, 255, 255));
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Lọc theo giá"));
@@ -532,7 +819,7 @@ public class ThongKe extends javax.swing.JPanel {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 23, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -665,6 +952,32 @@ public class ThongKe extends javax.swing.JPanel {
 
         jTabbedPane1.addTab("Tài khoản", jPanel6);
 
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1202, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 474, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("Biểu đồ nhập hàng", jPanel3);
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1202, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 474, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addTab("Biểu đồ xuất hàng", jPanel4);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -691,7 +1004,39 @@ public class ThongKe extends javax.swing.JPanel {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
-
+    private void setPdtbl(){
+        var list = thongKeDao.getThongKe(new Timestamp(0), new Timestamp(System.currentTimeMillis()));
+        DefaultTableModel model = (DefaultTableModel) tblThongKeProduct.getModel();
+        model.setRowCount(0);
+        int i = 1;
+        for (var item : list) {
+            model.addRow(new Object[]{
+                i++, item.getMaSanPham(), item.getTenSanPham(), item.getSoLuongNhap(), item.getSoLuongXuat()
+            });
+        }
+    }
+    private void setTbPhieu(){
+        var list = thongKeDao.getPhieu(new Timestamp(0), new Timestamp(System.currentTimeMillis()));
+        DefaultTableModel model = (DefaultTableModel) tblPhieuNhap.getModel();
+        System.out.println(list.size());
+        model.setRowCount(0);
+        int i = 1;
+        for (var item : list) {
+            model.addRow(new Object[]{
+                i++, item.getMaPhieu(), item.getNguoiTao(), item.getThoiGianTao(), item.getTongTien()
+            });
+        }
+    }
+    private void setTblAccount(){
+        var list = thongKeDao.getAccount();
+        DefaultTableModel model = (DefaultTableModel) tblAccount.getModel();
+        model.setRowCount(0);
+        for (var item : list) {
+            model.addRow(new Object[]{
+                    item.getFullName(), item.getEmail(), item.getUserName(), item.getRole(), item.getStatus() == 1 ? "Hoạt động" : "Khóa"
+            });
+        }
+    }
     private void tblThongKeProductMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblThongKeProductMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_tblThongKeProductMouseClicked
@@ -734,6 +1079,7 @@ public class ThongKe extends javax.swing.JPanel {
     private javax.swing.JButton jButton7;
     private javax.swing.JComboBox<String> jComboBox3;
     private javax.swing.JComboBox<String> jComboBox4;
+    private org.jfree.chart.resources.JFreeChartResources jFreeChartResources1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
@@ -759,6 +1105,8 @@ public class ThongKe extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel22;
     private javax.swing.JPanel jPanel23;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;

@@ -21,7 +21,7 @@ public class TaiKhoanFrm extends javax.swing.JPanel {
             model.setRowCount(0);
             for (model.Account acc : listTaiKhoan) {
                 model.addRow(new Object[]{
-                        acc.getUserName(), acc.getFullName(), acc.getEmail(), acc.getPhone()
+                        acc.getUserName(), acc.getFullName(), acc.getEmail()
                 });
             } 
         } catch (Exception e) {

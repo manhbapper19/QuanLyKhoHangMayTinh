@@ -6,10 +6,7 @@ import model.ChiTietPhieu;
 import model.PhieuNhap;
 import model.PhieuXuat;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class XuatHangDao {
@@ -133,11 +130,15 @@ public class XuatHangDao {
         }
         return null;
     }
-    public ArrayList<PhieuXuat> GetList(){
-        var query = "select * from phieuxuat order by thoiGianTao desc";
+    public ArrayList<PhieuXuat> GetList(Timestamp START, Timestamp END,double min, double max){
+        var query = "select * from phieuxuat where phieuxuat.thoiGianTao between ? and ? and phieuxuat.tongTien between ? and ? order by thoiGianTao desc";
         var list = new ArrayList<PhieuXuat>();
         try {
             ps = conn.prepareStatement(query);
+            ps.setTimestamp(1, START);
+            ps.setTimestamp(2, END);
+            ps.setDouble(3, min);
+            ps.setDouble(4, max);
             rs = ps.executeQuery();
             while (rs.next()){
                 var px = new PhieuXuat();
@@ -157,7 +158,7 @@ public class XuatHangDao {
         var query = "update maytinh set soLuong = soLuong + ? where maMay = ?";
         var check = "select soLuong from maytinh where maMay = ?";
         try {
-            ps = conn.prepareStatement(check);
+            PreparedStatement ps = conn.prepareStatement(check);
             ps.setString(1, id);
             rs = ps.executeQuery();
             int current = 0;
@@ -183,7 +184,7 @@ public class XuatHangDao {
     public boolean handedAdded(ArrayList<ChitietPhieuNhapDto> added){
         var query = "insert into chitietphieuxuat values(?,?,?,?)";
         try {
-            ps = conn.prepareStatement(query);
+            PreparedStatement ps = conn.prepareStatement(query);
             for (var i : added){
                 ps.setString(1, i.getMaPhieu());
                 ps.setString(2, i.getMaMay());
@@ -221,7 +222,7 @@ public class XuatHangDao {
     public boolean handleDeleted(ArrayList<ChitietPhieuNhapDto> deleted){
         var query = "delete from chitietphieuxuat where maPhieu = ? and maMay = ?";
         try {
-            ps = conn.prepareStatement(query);
+            PreparedStatement ps = conn.prepareStatement(query);
             for (var i : deleted){
                 ps.setString(1, i.getMaPhieu());
                 ps.setString(2, i.getMaMay());
@@ -241,7 +242,7 @@ public class XuatHangDao {
     public boolean handleUpdated(ArrayList<ChitietPhieuNhapDto> updated){
         var query = "update chitietphieuxuat set soLuong = ? where maPhieu = ? and maMay = ?";
         try {
-            ps= conn.prepareStatement(query);
+            PreparedStatement ps= conn.prepareStatement(query);
             for(var i:updated){
                 int previousQuantity = getPreviousQuantity(i.getMaPhieu(), i.getMaMay());
                 ps.setInt(1, i.getSoLuong());

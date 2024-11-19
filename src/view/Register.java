@@ -263,7 +263,7 @@ public class Register extends javax.swing.JDialog {
             // hash the password
             String hashedPassword = BCrypt.hashpw(matKhau, BCrypt.gensalt());
             try {
-                Account acc = new Account(userName, fullName, hashedPassword, email, phone);
+                Account acc = new Account(userName, fullName, hashedPassword, email);
                 accountsDAO.insert(acc);
                 JOptionPane.showMessageDialog(rootPane, "Đăng ký thành công!");
                 this.dispose();
