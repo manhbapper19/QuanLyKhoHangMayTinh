@@ -180,7 +180,7 @@ public class PhieuNhapDAO {
     public boolean handedAdded(ArrayList<ChitietPhieuNhapDto> added){
         var query = "insert into chitietphieunhap values(?,?,?,?)";
         try {
-            ps = conn.prepareStatement(query);
+            PreparedStatement ps = conn.prepareStatement(query);
             for (var i : added){
                 ps.setString(1, i.getMaPhieu());
                 ps.setString(2, i.getMaMay());
@@ -238,7 +238,7 @@ public class PhieuNhapDAO {
     public boolean handleUpdated(ArrayList<ChitietPhieuNhapDto> updated){
         var query = "update chitietphieunhap set soLuong = ? where maPhieu = ? and maMay = ?";
         try {
-            ps= conn.prepareStatement(query);
+            PreparedStatement ps= conn.prepareStatement(query);
             for(var i:updated){
                 int previousQuantity = getPreviousQuantity(i.getMaPhieu(), i.getMaMay());
                 ps.setInt(1, i.getSoLuong());
@@ -253,8 +253,8 @@ public class PhieuNhapDAO {
                     return false;
                 }
             }
+            ps.close();
             return true;
-
         }catch (Exception e){
             e.printStackTrace();
         }

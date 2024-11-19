@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
+import  controller.BCrypt;
 
 import model.Account;
 public class AccountsDAO implements DAOInterface<Account>{
@@ -14,22 +15,22 @@ public class AccountsDAO implements DAOInterface<Account>{
     PreparedStatement ps;
     ResultSet rs;
     // INSERT data vao SQL
-    public void insertData(String fullName, String user, String password, String email, String phone){
-        String sql = "INSERT INTO account values (?,?,?,?,?)";
-        try {
-            ps = conn.prepareStatement(sql);
-            ps.setString(1, fullName);
-            ps.setString(2, user);
-            ps.setString(3, password);
-            ps.setString(4, email);
-            ps.setString(5, phone);
-            if(ps.executeUpdate() > 0){
-//                JOptionPane.showMessageDialog(null, "Bạn đã đăng ký thành công!");
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(AccountsDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+//    public void insertData(String fullName, String user, String password, String email, String phone){
+//        String sql = "INSERT INTO account values (?,?,?,?,?)";
+//        try {
+//            ps = conn.prepareStatement(sql);
+//            ps.setString(1, fullName);
+//            ps.setString(2, user);
+//            ps.setString(3, password);
+//            ps.setString(4, email);
+//            ps.setString(5, phone);
+//            if(ps.executeUpdate() > 0){
+////                JOptionPane.showMessageDialog(null, "Bạn đã đăng ký thành công!");
+//            }
+//        } catch (SQLException ex) {
+//            Logger.getLogger(AccountsDAO.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
     // kiểm tra xem userName tồn tại hay chưa
     public boolean checkUsername(String user){
         String sql = "SELECT userName from account where userName = ?";
@@ -44,11 +45,32 @@ public class AccountsDAO implements DAOInterface<Account>{
         return false;
     }
 
+    //chekc mật khẩu
+    public boolean checkPassword(String password){
+        String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{5,}$";
+        if(password.matches(regex)) return true;
+        return false;
+    }
+    
     // check xác nhận mật khẩu và mật khẩu
-    public boolean checkPassword(String password, String confirmPassword){
+    public boolean checkPassword1(String password, String confirmPassword){
         if(password.equals(confirmPassword)) return true;
         return false;
     }
+    // check email regexp
+    public boolean checkEmail(String email){
+        String regex = "^[a-zA-Z0-9]+@[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)+$";
+        if(email.matches(regex)) return true;
+        return false;
+    }
+
+    // check phone regexp
+    public boolean checkPhone(String phone){
+        String regex = "0[0-9]{9}";
+        if(phone.matches(regex)) return true;
+        return false;
+    }
+    
     // check login
     public boolean checkLogin(String userName, String password){
         String sql = "SELECT * from account where userName = ? and password = ?";
@@ -64,13 +86,15 @@ public class AccountsDAO implements DAOInterface<Account>{
         return false;
     }
     public UserDetail login(String userName, String password) {
-        String sql = "SELECT * from account where userName = ? and password = ?";
+        String sql = "SELECT * from account where userName = ?";
         try {
             ps = conn.prepareStatement(sql);
             ps.setString(1, userName);
-            ps.setString(2, password);
             rs = ps.executeQuery();
             if (rs.next()) {
+                 UserDetail u = new UserDetail(rs.getString("fullName"), rs.getString("userName"), rs.getString("role"));
+            }
+            if(BCrypt.checkpw(password, rs.getString("password"))){
                 return new UserDetail(rs.getString("fullName"), rs.getString("userName"), rs.getString("role"));
             }
             return null;
@@ -78,26 +102,6 @@ public class AccountsDAO implements DAOInterface<Account>{
             Logger.getLogger(AccountsDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
-    }
-    //chekc mật khẩu
-    public boolean checkPassword(String password){
-        String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$";
-        if(password.matches(regex)) return true;
-        return false;
-    }
-
-    // check email regexp
-    public boolean checkEmail(String email){
-        String regex = "^[a-zA-Z0-9]+@[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)+$";
-        if(email.matches(regex)) return true;
-        return false;
-    }
-
-    // check phone regexp
-    public boolean checkPhone(String phone){
-        String regex = "0[0-9]{9}";
-        if(phone.matches(regex)) return true;
-        return false;
     }
     
     // check điền đầy đủ thông tin
@@ -140,14 +144,15 @@ public class AccountsDAO implements DAOInterface<Account>{
     
     @Override
     public boolean insert(Account acc) {
-        String sql = "INSERT INTO account values (?,?,?,?,?)";
+        String sql = "INSERT INTO account values (?,?,?,?,?,?)";
         try {
             ps = conn.prepareStatement(sql);
             ps.setString(1, acc.getUserName());
             ps.setString(2, acc.getFullName());
             ps.setString(3, acc.getPassword());
             ps.setString(4, acc.getEmail());
-            ps.setString(5, acc.getPhone());
+            ps.setString(5, "Nhân viên");
+            ps.setInt(6,1);
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();

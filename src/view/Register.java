@@ -1,5 +1,6 @@
 package view;
 
+import controller.BCrypt;
 import dao.AccountsDAO;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -235,7 +236,6 @@ public class Register extends javax.swing.JDialog {
             String userName = txtUserName.getText();
             String fullName = txtFullName.getText();
             String matKhau = new String(txtMatKhau.getPassword());
-//            String matKhau = passwordHash(txtMatkhau.getText());
             String xacNhanmk = new String(txtXacNhanMK.getPassword());
             String email = txtEmail.getText();
             String phone = txtPhone.getText();
@@ -243,14 +243,14 @@ public class Register extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(rootPane, "Username đã tồn tại!");
                 return;
             }
-//            if (!accounts.checkPassword(matKhau)) {
-//                JOptionPane.showMessageDialog(rootPane, "Mật khẩu không hợp lệ!");
-//                return;
-//            }
-//            if (!accounts.checkPassword(matKhau, xacNhanmk)) {
-//                JOptionPane.showMessageDialog(rootPane, "Mật khẩu và xác nhận mật khẩu không khớp!");
-//                return;
-//            }
+            if (!accountsDAO.checkPassword(matKhau)) {
+                JOptionPane.showMessageDialog(rootPane, "Mật khẩu không hợp lệ!");
+                return;
+            }
+            if (!accountsDAO.checkPassword1(matKhau, xacNhanmk)) {
+                JOptionPane.showMessageDialog(rootPane, "Mật khẩu và xác nhận mật khẩu không khớp!");
+                return;
+            }
 
             if (!accountsDAO.checkEmail(email)) {
                 JOptionPane.showMessageDialog(rootPane, "Email không hợp lệ!");
@@ -260,41 +260,22 @@ public class Register extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(rootPane, "Phone không hợp lệ!");
                 return;
             }
+            // hash the password
+            String hashedPassword = BCrypt.hashpw(matKhau, BCrypt.gensalt());
             try {
-                Account acc = new Account(userName, fullName, matKhau, email, phone);
+                Account acc = new Account(userName, fullName, hashedPassword, email, phone);
                 accountsDAO.insert(acc);
                 JOptionPane.showMessageDialog(rootPane, "Đăng ký thành công!");
                 this.dispose();
-//                new Login(parent, rootPaneCheckingEnabled);
                 Login login = new Login((java.awt.Frame) SwingUtilities.getWindowAncestor(this), true);
                 login.setVisible(true);
-                
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(rootPane, "Đăng ký thất bại: " + e.getMessage());
                 Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, e);
             }
         }
     }//GEN-LAST:event_btnDangKyActionPerformed
-    
-    // mã hóa password
-//    public static String passwordHash(String password){
-//        try {
-//            MessageDigest md = MessageDigest.getInstance("SHA");
-//            md.update(password.getBytes());
-//            byte[] rbt = md.digest();
-//            StringBuilder sb = new StringBuilder();
-//            for(byte b : rbt){
-//                sb.append(String.format("%02x", b));
-//            }
-//            return sb.toString();
-//        } catch (Exception e) {
-//        }
-//        return null;
-//    }
-    
-    /**
-     * @param args the command line arguments
-     */
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
