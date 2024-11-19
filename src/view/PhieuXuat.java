@@ -4,19 +4,43 @@
  */
 package view;
 
+import dao.XuatHangDao;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
+
 /**
  *
  * @author ASUS
  */
 public class PhieuXuat extends javax.swing.JPanel {
+    private XuatHangDao xuatHangDao = new XuatHangDao();
+    private ArrayList<model.PhieuXuat> listPhieu = new ArrayList<>();
 
     /**
      * Creates new form PhieuXuat
      */
     public PhieuXuat() {
         initComponents();
+        setData();
     }
+    public void setData(){
+        listPhieu = xuatHangDao.GetList();
+        DefaultTableModel model = (DefaultTableModel) jTable5.getModel();
+        model.setRowCount(0);
+        int i = 1;
+        for (model.PhieuXuat px : listPhieu) {
+            model.addRow(new Object[]{
+                i++,
+                px.getMaPhieu(),
+                px.getNguoiTao(),
+                px.getThoiGianTao(),
+                px.getTongTien()
+            });
+        }
 
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -119,16 +143,38 @@ public class PhieuXuat extends javax.swing.JPanel {
 
         jTable5.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {},
-                {},
-                {},
-                {}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-
+                "Số thứ tự", "Mã Phiếu Xuất", "Người Tạo", "Thời Gian Tạo", "Tổng Tiền"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Double.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane5.setViewportView(jTable5);
+        if (jTable5.getColumnModel().getColumnCount() > 0) {
+            jTable5.getColumnModel().getColumn(0).setResizable(false);
+            jTable5.getColumnModel().getColumn(1).setResizable(false);
+            jTable5.getColumnModel().getColumn(2).setResizable(false);
+            jTable5.getColumnModel().getColumn(3).setResizable(false);
+            jTable5.getColumnModel().getColumn(4).setResizable(false);
+        }
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Chức năng"));
 
@@ -140,6 +186,11 @@ public class PhieuXuat extends javax.swing.JPanel {
         });
 
         jButton2.setText("Sửa");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Xóa");
 
@@ -283,6 +334,19 @@ public class PhieuXuat extends javax.swing.JPanel {
         // TODO add your handling code here:
         //        new AddProductFrm().setVisible(true);
     }//GEN-LAST:event_btnAddProductActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        var row = jTable5.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        var maPhieu = listPhieu.get(row).getMaPhieu();
+        UpdatePhieuXuat updatePhieuXuat = new UpdatePhieuXuat((java.awt.Frame) SwingUtilities.getWindowAncestor(this), true, maPhieu);
+//        updatePhieuNhap.setMaPhieu(maPhieu);
+        updatePhieuXuat.setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

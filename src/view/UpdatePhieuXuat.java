@@ -4,6 +4,21 @@
  */
 package view;
 
+import dao.Dto.ChitietPhieuNhapDto;
+import dao.SanPhamDAO;
+import dao.XuatHangDao;
+import model.PhieuNhap;
+import model.PhieuXuat;
+import model.SanPham;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  *
  * @author huy
@@ -13,11 +28,65 @@ public class UpdatePhieuXuat extends javax.swing.JDialog {
     /**
      * Creates new form UpdatePhieuXuat
      */
-    public UpdatePhieuXuat(java.awt.Frame parent, boolean modal) {
+    private String maPhieu;
+    private SanPhamDAO spDAO = new SanPhamDAO();
+    private XuatHangDao xhDao = new XuatHangDao();
+    private ArrayList<SanPham> list = new ArrayList<>();
+    private ArrayList<ChitietPhieuNhapDto> listCTPN = new ArrayList<>();
+    private ArrayList<ChitietPhieuNhapDto> listCTPNUpdate = new ArrayList<>();
+    private PhieuXuat px;
+    private double tongTien;
+    public UpdatePhieuXuat(java.awt.Frame parent, boolean modal, String maPhieu) {
         super(parent, modal);
+        this.maPhieu = maPhieu;
         initComponents();
+        SetPhieuXuat();
+        setSpTable();
+        setListCTP();
+        setCtptable();
     }
-
+    public void SetPhieuXuat(){
+        px= new PhieuXuat();
+        px = xhDao.findById(maPhieu);
+        if (px != null) {
+            txtMaPhieu.setText(maPhieu);
+            txtNguoiTao.setText(px.getNguoiTao());
+        } else {
+            return;
+        }
+    }
+    public void setSpTable(){
+        list = spDAO.selectAll();
+        DefaultTableModel model = (DefaultTableModel) tblSanPham.getModel();
+        model.setRowCount(0);
+        int i = 1;
+        for (SanPham sp : list) {
+            model.addRow(new Object[]{
+                    sp.getMaMay(), sp.getTenMay(), sp.getSoLuong(), sp.getGia()
+            });
+        }
+    }
+    public void setListCTP(){
+        listCTPN = xhDao.getListCtp(maPhieu);
+        listCTPNUpdate = xhDao.getListCtp(maPhieu);
+    }
+    public void setCtptable(){
+        DefaultTableModel model = (DefaultTableModel) tblNhapHang.getModel();
+        model.setRowCount(0);
+        int i = 1;
+        double tongTien = 0;
+        for (ChitietPhieuNhapDto ctp : listCTPNUpdate) {
+            model.addRow(new Object[]{
+                    i++, ctp.getMaMay(), ctp.getTenSanPham(), ctp.getSoLuong(), ctp.getDonGia()
+            });
+            tongTien += ctp.getSoLuong() * ctp.getDonGia();
+        }
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        String formattedNumber = formatter.format(tongTien);
+        this.tongTien = tongTien;
+        textTongTien.setText(formattedNumber + "đ");
+        px.setTongTien(tongTien);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -30,8 +99,6 @@ public class UpdatePhieuXuat extends javax.swing.JDialog {
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtMaPhieu = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        cboNhaCungCap = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         txtNguoiTao = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -63,11 +130,6 @@ public class UpdatePhieuXuat extends javax.swing.JDialog {
         txtMaPhieu.setEnabled(false);
         txtMaPhieu.setFocusable(false);
         jPanel2.add(txtMaPhieu, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 20, 390, 36));
-
-        jLabel2.setText("Nhà cung cấp");
-        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, -1, -1));
-
-        jPanel2.add(cboNhaCungCap, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 70, 390, 36));
 
         jLabel3.setText("Người tạo phiếu");
         jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 130, -1, -1));
@@ -263,20 +325,126 @@ public class UpdatePhieuXuat extends javax.swing.JDialog {
 
     private void btnNhapHangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNhapHangActionPerformed
         // TODO add your handling code here:
+        if (listCTPNUpdate.size() == 0) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        Set<ChitietPhieuNhapDto> updateSet = new HashSet<>(listCTPNUpdate);
+        Set<ChitietPhieuNhapDto> originalSet = new HashSet<>(listCTPN);
+        var deleted = originalSet.stream()
+                .filter(x -> !updateSet.contains(x))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        var added = updateSet.stream()
+                .filter(x -> !originalSet.contains(x))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        var updated = updateSet.stream()
+                .filter(originalSet::contains)
+                .filter(x -> {
+                    ChitietPhieuNhapDto ori = originalSet.stream().filter(y -> y.equals(x)).findFirst().orElse(null);
+                    assert ori != null;
+                    return ori.getSoLuong() != x.getSoLuong();
+                })
+                .collect(Collectors.toCollection(ArrayList::new));
+        try {
+            if(xhDao.HandleCtpChange( added, deleted, updated)){
+                JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+                xhDao.set_Total(maPhieu, tongTien);
+                this.dispose();
+                return;
+            }
+            JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
         // Set so luong san pham cua tung loai ve ban dau
     }//GEN-LAST:event_btnNhapHangActionPerformed
 
     private void deleteProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteProductActionPerformed
         // TODO add your handling code here:
+        int row = tblNhapHang.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        listCTPNUpdate.remove(row);
+        setCtptable();
 
     }//GEN-LAST:event_deleteProductActionPerformed
-
+    public int showInputDialog(int quantity) {
+        String input = JOptionPane.showInputDialog(null, "Enter a quantity:", String.valueOf(quantity));
+        if (input == null) {
+            return -1;
+        }
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Số lượng không hợp lệ");
+            return -1;
+        }
+    }
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        // TODO add your handling code here:
+        int row = tblNhapHang.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        var ctp = listCTPNUpdate.get(row);
+        int soLuong = showInputDialog(ctp.getSoLuong());
+        if (soLuong == -1) {
+            JOptionPane.showMessageDialog(this, "Số lượng không hợp lệ");
+            return;
+        }
+        if(soLuong<ctp.getSoLuong()){
+            listCTPNUpdate.get(row).setSoLuong(soLuong);
+            setCtptable();
+            return;
+        }
+        var product = list.stream().filter(x -> x.getMaMay().equals(ctp.getMaMay())).findFirst().orElse(null);
+        assert product != null;
+        if (soLuong > product.getSoLuong()) {
+            JOptionPane.showMessageDialog(this, "Số lượng vượt quá số lượng trong kho");
+            return;
+        }
+        listCTPNUpdate.get(row).setSoLuong(soLuong);
+        setCtptable();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void addProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProductActionPerformed
         // TODO add your handling code here:
+        var row = tblSanPham.getSelectedRow();
+        if (row == -1) {
+            return;
+        }
+        var sp  = list.get(row);
+        var soLuong = Integer.parseInt(txtSoLuong.getText());
+        if(soLuong >= sp.getSoLuong()){
+            JOptionPane.showMessageDialog(this, "Số lượng sản phẩm không đủ");
+            return;
+        }
+        int index = -1;
+        for (int i = 0; i < listCTPNUpdate.size(); i++) {
+            if (listCTPNUpdate.get(i).getMaMay().equals(sp.getMaMay())) {
+                index = i;
+                break;
+            }
+        }
+        if(index != -1){
+            var spUpdate = listCTPNUpdate.get(index);
+            if(spUpdate.getSoLuong() + soLuong > sp.getSoLuong()){
+                JOptionPane.showMessageDialog(this, "Số lượng sản phẩm không đủ");
+                return;
+            }
+            spUpdate.setSoLuong(spUpdate.getSoLuong() + soLuong);
+            setCtptable();
+            return;
+        }
+        ChitietPhieuNhapDto ct = new ChitietPhieuNhapDto(maPhieu,sp.getMaMay(),soLuong,sp.getGia(),sp.getTenMay());
+        listCTPNUpdate.add(ct);
+        setCtptable();
     }//GEN-LAST:event_addProductActionPerformed
 
     private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
@@ -285,6 +453,7 @@ public class UpdatePhieuXuat extends javax.swing.JDialog {
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         // TODO add your handling code here:
+
     }//GEN-LAST:event_btnResetActionPerformed
 
     /**
@@ -317,7 +486,7 @@ public class UpdatePhieuXuat extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                UpdatePhieuXuat dialog = new UpdatePhieuXuat(new javax.swing.JFrame(), true);
+                UpdatePhieuXuat dialog = new UpdatePhieuXuat(new javax.swing.JFrame(), true, "PX001");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -333,11 +502,9 @@ public class UpdatePhieuXuat extends javax.swing.JDialog {
     private javax.swing.JButton addProduct;
     private javax.swing.JButton btnNhapHang;
     private javax.swing.JButton btnReset;
-    private javax.swing.JComboBox<String> cboNhaCungCap;
     private javax.swing.JButton deleteProduct;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

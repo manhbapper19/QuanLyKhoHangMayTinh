@@ -12,15 +12,17 @@ public class HomeFrm extends javax.swing.JFrame {
      */
     private String username;
     private String userId;
-    public HomeFrm(String username,String userId) {
+    private String role;
+    public HomeFrm(String username,String userId,String role) {
         initComponents();
         this.username = username;
         this.userId = userId;
+        this.role=role;
         setTitle("QUẢN LÝ KHO HÀNG MÁY TÍNH");
         setLocationRelativeTo(null);
         ChuyenManHinhController controller = new ChuyenManHinhController(jpnView, username, userId);
         controller.setView(jpnSanPham, jlbSanPham);
-
+        roleFiltering();
         List<DanhMucBean> listItem = new ArrayList<>();
         listItem.add(new DanhMucBean("SanPham", jpnSanPham, jlbSanPham));
         listItem.add(new DanhMucBean("NhaCungCap", jpnNhaCungCap, jlbNhaCungCap));
@@ -36,7 +38,40 @@ public class HomeFrm extends javax.swing.JFrame {
         jLabel1.setText("Xin chào ! " + username);
         controller.setEvent(listItem);
     }
-
+    private void roleFiltering(){
+//        switch (role)
+//        {
+//            case "Nhân viên xuất":
+//                jpnSanPham.setVisible(false);
+//                jpnNhaCungCap.setVisible(false);
+//                jpnNhapHang.setVisible(false);
+//                jpnPhieuNhap.setVisible(false);
+//                jpnTonKho.setVisible(false);
+//                jpnTaiKhoan.setVisible(false);
+//                jpnThongKe.setVisible(false);
+//                break;
+//            case "Nhân viên nhập":
+//                jpnSanPham.setVisible(false);
+//                jpnNhaCungCap.setVisible(false);
+//                jpnXuatHang.setVisible(false);
+//                jpnPhieuXuat.setVisible(false);
+//                jpnTonKho.setVisible(false);
+//                jpnTaiKhoan.setVisible(false);
+//                jpnThongKe.setVisible(false);
+//                break;
+//            case "Nhân viên kho":
+//                jpnTaiKhoan.setVisible(false);
+//                break;
+//            case "Admin":
+//                break;
+//            default:
+//                dispose();
+//        }
+        if (role.equals("Admin")) {
+        } else {
+            jpnTaiKhoan.setVisible(false);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

@@ -12,9 +12,13 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/huy/IdeaProjects/projectJava/src/view/NhapHang.java</file>
+            <file>file:/C:/Users/huy/IdeaProjects/projectJava/src/view/UpdatePhieuXuat.java</file>
             <file>file:/C:/Users/huy/IdeaProjects/projectJava/src/view/Login.java</file>
-            <file>file:/C:/Users/huy/IdeaProjects/projectJava/src/view/XuatHang.java</file>
+            <file>file:/C:/Users/huy/IdeaProjects/projectJava/src/dao/PhieuNhapDAO.java</file>
+            <file>file:/C:/Users/huy/IdeaProjects/projectJava/src/view/UpdatePhieuNhap.java</file>
+            <file>file:/C:/Users/huy/IdeaProjects/projectJava/src/view/PhieuXuat.java</file>
+            <file>file:/C:/Users/huy/IdeaProjects/projectJava/src/database/JDBC.java</file>
+            <file>file:/C:/Users/huy/IdeaProjects/projectJava/src/dao/XuatHangDao.java</file>
         </group>
     </open-files>
 </project-private>

@@ -55,35 +55,25 @@ public class ChiTietPhieu {
         this.donGia = donGia;
     }
 
-//    @Override
-//    public int hashCode() {
-//        int hash = 3;
-//        return hash;
-//    }
-//
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (this == obj) {
-//            return true;
-//        }
-//        if (obj == null) {
-//            return false;
-//        }
-//        if (getClass() != obj.getClass()) {
-//            return false;
-//        }
-//        final ChiTietPhieu other = (ChiTietPhieu) obj;
-//        if (this.soLuong != other.soLuong) {
-//            return false;
-//        }
-//        if (Double.doubleToLongBits(this.donGia) != Double.doubleToLongBits(other.donGia)) {
-//            return false;
-//        }
-//        if (!Objects.equals(this.maPhieu, other.maPhieu)) {
-//            return false;
-//        }
-//        return Objects.equals(this.maMay, other.maMay);
-//    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(maPhieu, maMay);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ChiTietPhieu other = (ChiTietPhieu) obj;
+        return Objects.equals(this.maMay, other.maMay) && Objects.equals(this.maPhieu, other.maPhieu);
+    }
 
     @Override
     public String toString() {

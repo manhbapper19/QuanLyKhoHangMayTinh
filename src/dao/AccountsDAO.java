@@ -71,7 +71,7 @@ public class AccountsDAO implements DAOInterface<Account>{
             ps.setString(2, password);
             rs = ps.executeQuery();
             if (rs.next()) {
-                return new UserDetail(rs.getString("fullName"), rs.getString("userName"));
+                return new UserDetail(rs.getString("fullName"), rs.getString("userName"), rs.getString("role"));
             }
             return null;
         } catch (SQLException ex) {

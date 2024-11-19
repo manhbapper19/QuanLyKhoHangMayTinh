@@ -4,6 +4,20 @@
  */
 package view;
 
+import dao.Dto.ChitietPhieuNhapDto;
+import dao.PhieuNhapDAO;
+import dao.SanPhamDAO;
+import model.PhieuNhap;
+import model.SanPham;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 /**
  *
  * @author huy
@@ -13,11 +27,67 @@ public class UpdatePhieuNhap extends javax.swing.JDialog {
     /**
      * Creates new form UpdatePhieuNhap
      */
-    public UpdatePhieuNhap(java.awt.Frame parent, boolean modal) {
+    private  String maPhieu;
+    private SanPhamDAO spDAO = new SanPhamDAO();
+    private ArrayList<SanPham> list = new ArrayList<>();
+    private ArrayList<ChitietPhieuNhapDto> listCTPN = new ArrayList<>();
+    private ArrayList<ChitietPhieuNhapDto> listCTPNUpdate = new ArrayList<>();
+    private double tongTien;
+    private PhieuNhapDAO pnDAO = new PhieuNhapDAO();
+    private PhieuNhap pn;
+    public UpdatePhieuNhap(java.awt.Frame parent, boolean modal,String maPhieu) {
         super(parent, modal);
+        this.maPhieu = maPhieu;
         initComponents();
+        SetPhieuNhap();
+        setSpTable();
+        setListCTPN();
+        setCtptable();
     }
 
+    public void SetPhieuNhap(){
+        pn= new PhieuNhap();
+        pn = pnDAO.findById(maPhieu);
+        if (pn != null) {
+            txtMaPhieu.setText(maPhieu);
+            txtNguoiTao.setText(pn.getNguoiTao());
+            cboNhaCungCap.setSelectedItem(pn.getNhaCungCap());
+        } else {
+            return;
+        }
+    }
+    public void setListCTPN(){
+        listCTPN = pnDAO.getListCtpn(pn.getMaPhieu());
+        listCTPNUpdate = pnDAO.getListCtpn(pn.getMaPhieu());
+    }
+    public void setCtptable(){
+        DefaultTableModel model = (DefaultTableModel) tblNhapHang.getModel();
+        model.setRowCount(0);
+        int i = 1;
+        double tongTien = 0;
+        for (ChitietPhieuNhapDto ctp : listCTPNUpdate) {
+            model.addRow(new Object[]{
+                    i++, ctp.getMaMay(), ctp.getTenSanPham(), ctp.getSoLuong(), ctp.getDonGia()
+            });
+            tongTien += ctp.getSoLuong() * ctp.getDonGia();
+        }
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        String formattedNumber = formatter.format(tongTien);
+        this.tongTien = tongTien;
+        textTongTien.setText(formattedNumber + "đ");
+        pn.setTongTien(tongTien);
+    }
+    public void setSpTable(){
+        list = spDAO.selectAll();
+        DefaultTableModel model = (DefaultTableModel) tblSanPham.getModel();
+        model.setRowCount(0);
+        int i = 1;
+        for (SanPham sp : list) {
+            model.addRow(new Object[]{
+                    sp.getMaMay(), sp.getTenMay(), sp.getSoLuong(), sp.getGia()
+            });
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -40,7 +110,7 @@ public class UpdatePhieuNhap extends javax.swing.JDialog {
         jLabel5 = new javax.swing.JLabel();
         textTongTien = new javax.swing.JLabel();
         deleteProduct = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        editbtn = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblSanPham = new javax.swing.JTable();
@@ -117,16 +187,16 @@ public class UpdatePhieuNhap extends javax.swing.JDialog {
         });
         jPanel2.add(deleteProduct, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 520, 160, 40));
 
-        jButton1.setFont(new java.awt.Font("SF Pro Display", 0, 16)); // NOI18N
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_edit_25px.png"))); // NOI18N
-        jButton1.setText("Sửa số lượng");
-        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        editbtn.setFont(new java.awt.Font("SF Pro Display", 0, 16)); // NOI18N
+        editbtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_edit_25px.png"))); // NOI18N
+        editbtn.setText("Sửa số lượng");
+        editbtn.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        editbtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                editbtnActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 520, -1, 40));
+        jPanel2.add(editbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 520, -1, 40));
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -263,22 +333,112 @@ public class UpdatePhieuNhap extends javax.swing.JDialog {
 
     private void btnNhapHangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNhapHangActionPerformed
         // TODO add your handling code here:
-        // Set so luong san pham cua tung loai ve ban dau
+        if (listCTPNUpdate.size() == 0) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        Set<ChitietPhieuNhapDto> updateSet = new HashSet<>(listCTPNUpdate);
+        Set<ChitietPhieuNhapDto> originalSet = new HashSet<>(listCTPN);
+        var deleted = originalSet.stream()
+                .filter(x -> !updateSet.contains(x))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        var added = updateSet.stream()
+                .filter(x -> !originalSet.contains(x))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        var updated = updateSet.stream()
+                .filter(originalSet::contains)
+                .filter(x -> {
+                    ChitietPhieuNhapDto ori = originalSet.stream().filter(y -> y.equals(x)).findFirst().orElse(null);
+                    assert ori != null;
+                    return ori.getSoLuong() != x.getSoLuong();
+                })
+                .collect(Collectors.toCollection(ArrayList::new));
+        try {
+            if(pnDAO.HandleCtpChange( added, deleted, updated)){
+                JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+                pnDAO.set_Total(maPhieu, tongTien);
+                this.dispose();
+                return;
+            }
+            JOptionPane.showMessageDialog(this, "Cập nhật thất bại");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
     }//GEN-LAST:event_btnNhapHangActionPerformed
 
     private void deleteProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteProductActionPerformed
         // TODO add your handling code here:
+        int row = tblNhapHang.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        listCTPNUpdate.remove(row);
+        setCtptable();
     }//GEN-LAST:event_deleteProductActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void editbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editbtnActionPerformed
         // TODO add your handling code here:
+        int row = tblNhapHang.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        var ctp = listCTPNUpdate.get(row);
+        int soLuong = showInputDialog(ctp.getSoLuong());
+        if (soLuong == -1) {
+            JOptionPane.showMessageDialog(this, "Số lượng không hợp lệ");
+            return;
+        }
+//        var product = list.stream().filter(x -> x.getMaMay().equals(ctp.getMaMay())).findFirst().orElse(null);
+//        assert product != null;
+//        if (soLuong > product.getSoLuong()) {
+//            JOptionPane.showMessageDialog(this, "Số lượng vượt quá số lượng trong kho");
+//            return;
+//        }
+        listCTPNUpdate.get(row).setSoLuong(soLuong);
+        setCtptable();
 
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_editbtnActionPerformed
 
     private void addProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addProductActionPerformed
         // TODO add your handling code here:
+        var row = tblSanPham.getSelectedRow();
+        if (row == -1) {
+            return;
+        }
+        var sp  = list.get(row);
+        var soLuong = Integer.parseInt(txtSoLuong.getText());
+        int index = -1;
+        for (int i = 0; i < listCTPNUpdate.size(); i++) {
+            if (listCTPNUpdate.get(i).getMaMay().equals(sp.getMaMay())) {
+                index = i;
+                break;
+            }
+        }
+        if(index != -1){
+            listCTPNUpdate.get(index).setSoLuong(listCTPNUpdate.get(index).getSoLuong() + soLuong);
+            setCtptable();
+            return;
+        }
+        ChitietPhieuNhapDto ct = new ChitietPhieuNhapDto(maPhieu,sp.getMaMay(),soLuong,sp.getGia(),sp.getTenMay());
+        listCTPNUpdate.add(ct);
+        setCtptable();
     }//GEN-LAST:event_addProductActionPerformed
-
+    public int showInputDialog(int quantity) {
+        String input = JOptionPane.showInputDialog(null, "Enter a quantity:", String.valueOf(quantity));
+        if (input == null) {
+            return -1;
+        }
+        try {
+            return Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Số lượng không hợp lệ");
+            return -1;
+        }
+    }
     private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
         // TODO add your handling code here:
 
@@ -292,44 +452,44 @@ public class UpdatePhieuNhap extends javax.swing.JDialog {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(UpdatePhieuNhap.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(UpdatePhieuNhap.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(UpdatePhieuNhap.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(UpdatePhieuNhap.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                UpdatePhieuNhap dialog = new UpdatePhieuNhap(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(UpdatePhieuNhap.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(UpdatePhieuNhap.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(UpdatePhieuNhap.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(UpdatePhieuNhap.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//
+//        /* Create and display the dialog */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                UpdatePhieuNhap dialog = new UpdatePhieuNhap(new javax.swing.JFrame(), true);
+//                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+//                    @Override
+//                    public void windowClosing(java.awt.event.WindowEvent e) {
+//                        System.exit(0);
+//                    }
+//                });
+//                dialog.setVisible(true);
+//            }
+//        });
+//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addProduct;
@@ -337,7 +497,7 @@ public class UpdatePhieuNhap extends javax.swing.JDialog {
     private javax.swing.JButton btnReset;
     private javax.swing.JComboBox<String> cboNhaCungCap;
     private javax.swing.JButton deleteProduct;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton editbtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

@@ -10,7 +10,10 @@ public class ChitietPhieuNhapDto extends ChiTietPhieu {
         super(maPhieu, maMay, soLuong, donGia);
         TenSanPham = tenSanPham;
     }
-
+    public ChitietPhieuNhapDto(ChitietPhieuNhapDto other) {
+        super(other.getMaPhieu(), other.getMaMay(), other.getSoLuong(), other.getDonGia());
+        this.TenSanPham = other.TenSanPham;
+    }
     public String getTenSanPham() {
         return TenSanPham;
     }
@@ -21,4 +24,5 @@ public class ChitietPhieuNhapDto extends ChiTietPhieu {
     public ChiTietPhieu downgrade(){
         return new ChiTietPhieu(getMaPhieu(), getMaMay(), getSoLuong(), getDonGia());
     }
+
 }

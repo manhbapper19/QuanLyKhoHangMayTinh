@@ -30,14 +30,14 @@ public class NhapHang extends javax.swing.JPanel {
         initComponents();
         setTableDanhMucSanPham();
 
-        jTable4.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        setCtptable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tbDanhMucSanPham.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setNcc();
         setPhieuNhap();
     }
     public void renderCtPn(){
-        jTable4.removeAll();
-        DefaultTableModel model = (DefaultTableModel)jTable4.getModel();
+        setCtptable.removeAll();
+        DefaultTableModel model = (DefaultTableModel)setCtptable.getModel();
         model.setRowCount(0);
         for(int i = 0; i < listChiTietPhieu.size(); i++){
             model.addRow(new Object[]{
@@ -101,7 +101,7 @@ public class NhapHang extends javax.swing.JPanel {
             String id = phieuNhapDAO.taoMaPhieu();
             phieuNhap.setMaPhieu(id);
             maPhieu = id;
-            phieuNhap.setNguoiTao("emilia");
+            phieuNhap.setNguoiTao("admin");
             phieuNhap.setThoiGianTao(new Timestamp(System.currentTimeMillis()));
             jTextField5.enable(false);
             jTextField5.setText(id);
@@ -151,7 +151,7 @@ public class NhapHang extends javax.swing.JPanel {
         jButton17 = new javax.swing.JButton();
         jButton18 = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTable4 = new javax.swing.JTable();
+        setCtptable = new javax.swing.JTable();
 
         tbDanhMucSanPham.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -279,7 +279,7 @@ public class NhapHang extends javax.swing.JPanel {
             }
         });
 
-        jTable4.setModel(new javax.swing.table.DefaultTableModel(
+        setCtptable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -298,7 +298,7 @@ public class NhapHang extends javax.swing.JPanel {
                 return types [columnIndex];
             }
         });
-        jScrollPane4.setViewportView(jTable4);
+        jScrollPane4.setViewportView(setCtptable);
 
         javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
         jPanel11.setLayout(jPanel11Layout);
@@ -474,7 +474,7 @@ public class NhapHang extends javax.swing.JPanel {
 
     private void jButton18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton18ActionPerformed
         // TODO add your handling code here:
-        int id = jTable4.getSelectedRow();
+        int id = setCtptable.getSelectedRow();
         if(id == -1){
             JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
             return;
@@ -486,7 +486,7 @@ public class NhapHang extends javax.swing.JPanel {
 
     private void jButton17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton17ActionPerformed
         // TODO add your handling code here:
-        int id = jTable4.getSelectedRow();
+        int id = setCtptable.getSelectedRow();
         if(id == -1){
             JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
             return;
@@ -521,10 +521,10 @@ public class NhapHang extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel12;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTable jTable4;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
+    private javax.swing.JTable setCtptable;
     private javax.swing.JTable tbDanhMucSanPham;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables

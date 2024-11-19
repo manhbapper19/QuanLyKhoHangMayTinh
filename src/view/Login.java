@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
 
 public class Login extends javax.swing.JDialog {
     AccountsDAO accountsDAO = new AccountsDAO();
-    /**
+    /**e
      * Creates new form logins
      */
     public Login(java.awt.Frame parent, boolean modal) {
@@ -162,7 +162,7 @@ public class Login extends javax.swing.JDialog {
 //            new HomeFrm().setVisible(true);
         if(login != null){
             this.dispose();
-            new HomeFrm(login.getUserName(),login.getId()).setVisible(true);
+            new HomeFrm(login.getUserName(),login.getId(),login.getRole()).setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Sai tên đăng nhập hoặc mật khẩu!");
         }

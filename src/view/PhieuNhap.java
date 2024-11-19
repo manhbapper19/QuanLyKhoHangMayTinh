@@ -4,6 +4,13 @@
  */
 package view;
 
+import dao.PhieuNhapDAO;
+import model.NhaCungCap;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
+
 /**
  *
  * @author ASUS
@@ -13,8 +20,11 @@ public class PhieuNhap extends javax.swing.JPanel {
     /**
      * Creates new form PhieuNhap
      */
+    ArrayList<model.PhieuNhap> list = new ArrayList<>();
+    private PhieuNhapDAO phieuNhapDAO = new PhieuNhapDAO();
     public PhieuNhap() {
         initComponents();
+        SetDataToTbl();
     }
 
     /**
@@ -119,16 +129,39 @@ public class PhieuNhap extends javax.swing.JPanel {
 
         jTable5.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {},
-                {},
-                {},
-                {}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-
+                "STT", "Mã Phiếu Nhập", "Nhà cung cấp", "Người tạo", "Thời gian tạo", "Tổng tiền"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane5.setViewportView(jTable5);
+        if (jTable5.getColumnModel().getColumnCount() > 0) {
+            jTable5.getColumnModel().getColumn(0).setResizable(false);
+            jTable5.getColumnModel().getColumn(1).setResizable(false);
+            jTable5.getColumnModel().getColumn(2).setResizable(false);
+            jTable5.getColumnModel().getColumn(3).setResizable(false);
+            jTable5.getColumnModel().getColumn(4).setResizable(false);
+            jTable5.getColumnModel().getColumn(5).setResizable(false);
+        }
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Chức năng"));
 
@@ -140,8 +173,18 @@ public class PhieuNhap extends javax.swing.JPanel {
         });
 
         jButton2.setText("Sửa");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Xóa");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton5.setText("Nhập Excel");
 
@@ -272,11 +315,60 @@ public class PhieuNhap extends javax.swing.JPanel {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+    public  void SetDataToTbl(){
+        list = phieuNhapDAO.getList();
+        var model = (DefaultTableModel) jTable5.getModel();
+        model.setRowCount(0);
+        for (var i : list) {
+            model.addRow(new Object[]{
+                model.getRowCount() + 1,
+                i.getMaPhieu(),
+                i.getNhaCungCap(),
+                i.getNguoiTao(),
+                i.getThoiGianTao(),
+                i.getTongTien()
+            });
+        }
 
+    }
     private void btnAddProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddProductActionPerformed
-        // TODO add your handling code here:
+         // TODO add your handling code here:
         //        new AddProductFrm().setVisible(true);
+
     }//GEN-LAST:event_btnAddProductActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        var row = jTable5.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        var maPhieu = list.get(row).getMaPhieu();
+        UpdatePhieuNhap updatePhieuNhap = new UpdatePhieuNhap((java.awt.Frame) SwingUtilities.getWindowAncestor(this), true, maPhieu);
+//        updatePhieuNhap.setMaPhieu(maPhieu);
+        updatePhieuNhap.setVisible(true);
+    }//GEN-LAST:event_jButton2ActionPerformed
+    // xoá
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        var row = jTable5.getSelectedRow();
+        if (row == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm");
+            return;
+        }
+        var maPhieu = list.get(row).getMaPhieu();
+        int option = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xoá phiếu nhập này không?");
+        if (option == JOptionPane.YES_OPTION) {
+            if (phieuNhapDAO.xoaPhieuNhap(maPhieu)) {
+                JOptionPane.showMessageDialog(this, "Xoá thành công");
+                SetDataToTbl();
+            } else {
+                JOptionPane.showMessageDialog(this, "Xoá thất bại");
+            }
+        }
+
+    }//GEN-LAST:event_jButton3ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
