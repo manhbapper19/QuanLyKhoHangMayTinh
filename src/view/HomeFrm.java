@@ -2,6 +2,8 @@ package view;
 
 import bean.DanhMucBean;
 import controller.ChuyenManHinhController;
+import dao.Dto.UserDetail;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,17 +12,16 @@ public class HomeFrm extends javax.swing.JFrame {
     /**
      * Creates new form HomeFrm
      */
-    private String username;
-    private String userId;
-    private String role;
-    public HomeFrm(String username,String userId,String role) {
+//    private String username;
+//    private String userId;
+//    private String role;
+    private UserDetail userDetail;
+    public HomeFrm(UserDetail userDetail) {
         initComponents();
-        this.username = username;
-        this.userId = userId;
-        this.role=role;
+        this.userDetail = userDetail;
         setTitle("QUẢN LÝ KHO HÀNG MÁY TÍNH");
         setLocationRelativeTo(null);
-        ChuyenManHinhController controller = new ChuyenManHinhController(jpnView, username, userId);
+        ChuyenManHinhController controller = new ChuyenManHinhController(jpnView, userDetail);
         controller.setView(jpnSanPham, jlbSanPham);
         roleFiltering();
         List<DanhMucBean> listItem = new ArrayList<>();
@@ -35,7 +36,7 @@ public class HomeFrm extends javax.swing.JFrame {
         listItem.add(new DanhMucBean("ThongKe", jpnThongKe, jlbThongKe));
         listItem.add(new DanhMucBean("DoiThongTin", jpnDoiThongTin, jlbDoiThongTin));
         listItem.add(new DanhMucBean("DangXuat", jpnDangXuat, jlbDangXuat));
-        jLabel1.setText("Xin chào ! " + username);
+        jLabel1.setText("Xin chào ! " + userDetail.getUserName());
         controller.setEvent(listItem);
     }
     private void roleFiltering(){
@@ -67,9 +68,11 @@ public class HomeFrm extends javax.swing.JFrame {
 //            default:
 //                dispose();
 //        }
-        if (role.equals("Admin")) {
+        if (userDetail.getRole().equals("Admin")) {
+            jpnTonKho.setVisible(false);
         } else {
             jpnTaiKhoan.setVisible(false);
+            jpnTonKho.setVisible(false);
         }
     }
     /**

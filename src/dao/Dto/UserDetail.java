@@ -4,11 +4,21 @@ public class UserDetail {
     private String userName;
     private String id;
     private String role;
+    private String email;
 
-    public UserDetail(String userName, String id,String role) {
+    public UserDetail(String userName, String id,String role, String email) {
         this.userName = userName;
         this.id = id;
         this.role = role;
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getId() {

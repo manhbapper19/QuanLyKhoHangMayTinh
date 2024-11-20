@@ -3,14 +3,22 @@ package view;
 import dao.NhaCungCapDAO;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import model.NhaCungCap;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 public class NhaCungCapFrm extends javax.swing.JPanel implements ActionListener{
@@ -165,7 +173,7 @@ public class NhaCungCapFrm extends javax.swing.JPanel implements ActionListener{
         btnUpdateNCC = new javax.swing.JButton();
         btnDeleteNCC = new javax.swing.JButton();
         btnNhapExcelNCC = new javax.swing.JButton();
-        btnXuatExcelNCC = new javax.swing.JButton();
+        btnXuatExcel = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jComboBox1 = new javax.swing.JComboBox<>();
         txtSearch = new javax.swing.JTextField();
@@ -212,14 +220,19 @@ public class NhaCungCapFrm extends javax.swing.JPanel implements ActionListener{
 
         btnNhapExcelNCC.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_add_file_25px_2.png"))); // NOI18N
         btnNhapExcelNCC.setText("Nhập Excel");
+        btnNhapExcelNCC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNhapExcelNCCActionPerformed(evt);
+            }
+        });
 
-        btnXuatExcelNCC.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8-microsoft-excel-2019-25.png"))); // NOI18N
-        btnXuatExcelNCC.setText("Xuất Excel");
-//        btnXuatExcelNCC.addActionListener(new java.awt.event.ActionListener() {
-//            public void actionPerformed(java.awt.event.ActionEvent evt) {
-//                btnXuatExcelNCCActionPerformed(evt);
-//            }
-//        });
+        btnXuatExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8-microsoft-excel-2019-25.png"))); // NOI18N
+        btnXuatExcel.setText("Xuất Excel");
+        btnXuatExcel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXuatExcelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -232,11 +245,11 @@ public class NhaCungCapFrm extends javax.swing.JPanel implements ActionListener{
                 .addComponent(btnUpdateNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnDeleteNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addGap(26, 26, 26)
                 .addComponent(btnNhapExcelNCC)
                 .addGap(18, 18, 18)
-                .addComponent(btnXuatExcelNCC)
-                .addGap(16, 16, 16))
+                .addComponent(btnXuatExcel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -247,8 +260,8 @@ public class NhaCungCapFrm extends javax.swing.JPanel implements ActionListener{
                     .addComponent(btnUpdateNCC)
                     .addComponent(btnDeleteNCC)
                     .addComponent(btnNhapExcelNCC)
-                    .addComponent(btnXuatExcelNCC))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnXuatExcel, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Tìm kiếm"));
@@ -288,7 +301,7 @@ public class NhaCungCapFrm extends javax.swing.JPanel implements ActionListener{
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26))
         );
@@ -331,13 +344,116 @@ public class NhaCungCapFrm extends javax.swing.JPanel implements ActionListener{
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnNhapExcelNCCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNhapExcelNCCActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        int returnValue = fileChooser.showOpenDialog(this);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            readExcelFile(selectedFile);
+        }
+    }//GEN-LAST:event_btnNhapExcelNCCActionPerformed
+    
+    private void readExcelFile(File file) {
+        List<NhaCungCap> existingNCC = new ArrayList<>();
+        try (FileInputStream fis = new FileInputStream(file);
+             XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            DefaultTableModel model = (DefaultTableModel) tbNCC.getModel();
+            model.setRowCount(0); // Clear existing data
+
+            List<NhaCungCap> newNCC = new ArrayList<>();
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                XSSFRow row = sheet.getRow(i);
+                NhaCungCap ncc = new NhaCungCap(
+                        row.getCell(0).getStringCellValue(),
+                        row.getCell(1).getStringCellValue(),
+                        row.getCell(2).getStringCellValue(),
+                        row.getCell(3).getStringCellValue()
+                );
+
+                if(!nhaCungCapDAO.exists(ncc.getMaNhaCungCap())) {
+                    nhaCungCapDAO.insert(ncc);
+                    newNCC.add(ncc);
+                }else {
+                    existingNCC.add(ncc);
+                }
+            }
+
+            for (NhaCungCap ncc : newNCC) {
+                model.addRow(new Object[]{
+                        ncc.getMaNhaCungCap(),
+                        ncc.getTenNhaCungCap(),
+                        ncc.getSdt(),
+                        ncc.getDiaChi()
+                });
+            }
+            if (!existingNCC.isEmpty()) {
+                StringBuilder message = new StringBuilder("Các sản phẩm sau đã có trong SQL:\n");
+                for (NhaCungCap ncc : existingNCC) {
+                    message.append(ncc.getMaNhaCungCap()).append(" - ").append(ncc.getTenNhaCungCap()).append("\n");
+                }
+                JOptionPane.showMessageDialog(this, message.toString(), "Existing NhaCungCap", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error reading Excel file: " + e.getMessage());
+        }
+    }
+    
+    private void btnXuatExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXuatExcelActionPerformed
+        // TODO add your handling code here:
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save Excel File");
+        int userSelection = fileChooser.showSaveDialog(this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            if (!fileToSave.getAbsolutePath().endsWith(".xlsx")) {
+                fileToSave = new File(fileToSave.getAbsolutePath() + ".xlsx");
+            }
+            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+                XSSFSheet sheet = workbook.createSheet("Danh sach nha cung cap");
+                XSSFRow row = sheet.createRow(0);
+                Cell cell = row.createCell(0, CellType.STRING);
+                cell.setCellValue("Ma nha cung cap");
+                cell = row.createCell(1, CellType.STRING);
+                cell.setCellValue("Ten nha cung cap");
+                cell = row.createCell(2, CellType.STRING);
+                cell.setCellValue("So dien thoai");
+                cell = row.createCell(3, CellType.STRING);
+                cell.setCellValue("Dia chi");
+                cell = row.createCell(4, CellType.STRING);
+                for (int i = 0; i < listNhaCungCap.size(); i++) {
+                    row = sheet.createRow(i + 1);
+                    cell = row.createCell(0, CellType.STRING);
+                    cell.setCellValue(listNhaCungCap.get(i).getMaNhaCungCap());
+                    cell = row.createCell(1, CellType.STRING);
+                    cell.setCellValue(listNhaCungCap.get(i).getTenNhaCungCap());
+                    cell = row.createCell(2, CellType.NUMERIC);
+                    cell.setCellValue(listNhaCungCap.get(i).getSdt());
+                    cell = row.createCell(3, CellType.STRING);
+                    cell.setCellValue(listNhaCungCap.get(i).getDiaChi());
+                }
+
+                try (FileOutputStream out = new FileOutputStream(fileToSave)) {
+                    workbook.write(out);
+                }
+
+                JOptionPane.showMessageDialog(this, "Xuất Excel thành công!");
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error writing Excel file: " + e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_btnXuatExcelActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDeleteNCC;
     private javax.swing.JButton btnNhapExcelNCC;
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnThemNCC;
     private javax.swing.JButton btnUpdateNCC;
-    private javax.swing.JButton btnXuatExcelNCC;
+    private javax.swing.JButton btnXuatExcel;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;

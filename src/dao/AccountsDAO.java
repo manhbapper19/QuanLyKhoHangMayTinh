@@ -8,6 +8,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import  controller.BCrypt;
+import java.security.SecureRandom;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import model.Account;
 public class AccountsDAO implements DAOInterface<Account>{
@@ -44,7 +47,15 @@ public class AccountsDAO implements DAOInterface<Account>{
         }
         return false;
     }
-
+    
+    //check userName
+    public boolean checkUserName(String user){
+        String regex = "^[a-zA-Z0-9]*$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(user);
+        return matcher.matches();
+    }
+    
     //chekc mật khẩu
     public boolean checkPassword(String password){
         String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{5,}$";
@@ -92,10 +103,10 @@ public class AccountsDAO implements DAOInterface<Account>{
             ps.setString(1, userName);
             rs = ps.executeQuery();
             if (rs.next()) {
-                 UserDetail u = new UserDetail(rs.getString("fullName"), rs.getString("userName"), rs.getString("role"));
+                 UserDetail u = new UserDetail(rs.getString("fullName"), rs.getString("userName"), rs.getString("role"), rs.getString("email"));
             }
             if(BCrypt.checkpw(password, rs.getString("password"))){
-                return new UserDetail(rs.getString("fullName"), rs.getString("userName"), rs.getString("role"));
+                return new UserDetail(rs.getString("fullName"), rs.getString("userName"), rs.getString("role"), rs.getString("email"));
             }
             return null;
         } catch (SQLException ex) {
@@ -192,8 +203,53 @@ public class AccountsDAO implements DAOInterface<Account>{
         return list;
     }
 
+        public boolean checkCurrentPassword(String userName, String currentPassword) {
+        String sql = "SELECT * from account where userName = ?";
+        try  {
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, userName);
+            rs = ps.executeQuery();
+//            if (rs.next()) {
+//                String storedPassword = rs.getString("password");
+//                return BCrypt.checkpw(currentPassword, storedPassword);
+//            }
+            if (rs.next()) {
+                return BCrypt.checkpw(currentPassword, rs.getString("password"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+        
     @Override
     public Account selectById(String t) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+        public boolean updateAccount(String userName, String fullName, String email, String hashedPassword) {
+        String sql = "UPDATE account SET fullName = ?, email = ?, password = ? WHERE userName = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, fullName);
+            pstmt.setString(2, email);
+            pstmt.setString(3, hashedPassword);
+            pstmt.setString(4, userName); // Assuming userName is the primary key
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+     public String generateResetKey(){
+         SecureRandom ran = new SecureRandom();
+         int code = 100000 + ran.nextInt(900000); // Generate a number between 100000 and 999999
+         return String.valueOf(code);
+     }
+     public void emailSender(){
+        String host ="smtp.gmail.com" ;
+        String port = "587";
+        String mailFrom = "manhbapper190704@gmail.com";
+        String password = "your-password";
+     }
 }

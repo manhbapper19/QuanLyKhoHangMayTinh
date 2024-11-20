@@ -10,7 +10,10 @@ import java.awt.*;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import model.ChiTietPhieu;
@@ -25,15 +28,22 @@ public class NhapHang extends javax.swing.JPanel {
     private String maPhieu;
     ArrayList<SanPham> listDanhMucSanPham = new ArrayList<>();
     ArrayList<ChitietPhieuNhapDto> listChiTietPhieu = new ArrayList<>();
+    private  String userId;
+    private String userName;
     private PhieuNhap phieuNhap ;
-    public NhapHang() {
+    public NhapHang(String userName, String userId) {
         initComponents();
         setTableDanhMucSanPham();
-
+        this.userId = userId;
+        this.userName = userName;
         setCtptable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         tbDanhMucSanPham.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jButton16.setVisible(false);
         setNcc();
         setPhieuNhap();
+        setComboboxData();
+        setTableNCCData1();
+        addSearchListener();
     }
     public void renderCtPn(){
         setCtptable.removeAll();
@@ -101,11 +111,11 @@ public class NhapHang extends javax.swing.JPanel {
             String id = phieuNhapDAO.taoMaPhieu();
             phieuNhap.setMaPhieu(id);
             maPhieu = id;
-            phieuNhap.setNguoiTao("admin");
+            phieuNhap.setNguoiTao(this.userId);
             phieuNhap.setThoiGianTao(new Timestamp(System.currentTimeMillis()));
             jTextField5.enable(false);
             jTextField5.setText(id);
-            jTextField6.setText("emilia");
+            jTextField6.setText(this.userName);
             jTextField6.enable(false);
 
         }catch (Exception e){
@@ -134,6 +144,7 @@ public class NhapHang extends javax.swing.JPanel {
         jPanel12 = new javax.swing.JPanel();
         txtSearch = new javax.swing.JTextField();
         btnReset = new javax.swing.JButton();
+        jComboBox1 = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         jTextField4 = new javax.swing.JTextField();
         jButton14 = new javax.swing.JButton();
@@ -183,25 +194,31 @@ public class NhapHang extends javax.swing.JPanel {
             }
         });
 
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
         jPanel12.setLayout(jPanel12Layout);
         jPanel12Layout.setHorizontalGroup(
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel12Layout.createSequentialGroup()
-                .addGap(36, 36, 36)
-                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(47, 47, 47))
+                .addContainerGap()
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37)
+                .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel12Layout.setVerticalGroup(
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel12Layout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22)
+                .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel1.setText("Số lượng :");
@@ -219,7 +236,7 @@ public class NhapHang extends javax.swing.JPanel {
         jPanel10.setLayout(jPanel10Layout);
         jPanel10Layout.setHorizontalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
             .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addGap(49, 49, 49)
@@ -250,7 +267,7 @@ public class NhapHang extends javax.swing.JPanel {
 
         jLabel4.setText("Người tạo phiếu");
 
-        //jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        ///jComboBox3.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel5.setText("Tổng tiền : ");
 
@@ -358,7 +375,7 @@ public class NhapHang extends javax.swing.JPanel {
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(47, 47, 47)
                 .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -501,6 +518,99 @@ public class NhapHang extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton17ActionPerformed
 
 
+    /* hiển thị dữ liệu ra combobox */
+
+    // B1 : lấy tên các cột trong table truyền vào list
+    private List<String> getColumnNames() {
+        List<String> columnNames = new ArrayList<>();
+        for (int i = 0; i < tbDanhMucSanPham.getColumnCount(); i++) {
+            columnNames.add(tbDanhMucSanPham.getColumnName(i));
+        }
+        return columnNames;
+    }
+
+    // B2 : truyền dữ liệu từ list vào combobox
+    private void setComboboxData() {
+        List<String> columnNames = getColumnNames();
+        jComboBox1.removeAllItems();
+        for (String columnName : columnNames) {
+            jComboBox1.addItem(columnName);
+        }
+    }
+
+    /* hiển thị dữ liệu ra table dựa vào từ khóa tìm kiếm theo cột */
+
+    // B1 : lấy giá trị của cột tương ứng cho 1 nhà cung cấp cụ thể
+    private String getColumnValue(SanPham sp, String columnName) {
+        switch (columnName) {
+            case "Mã máy":
+                return sp.getMaMay();
+            case "Tên máy":
+                return sp.getTenMay();
+            case "Số lượng":
+                return String.valueOf(sp.getSoLuong());
+            case "Đơn giá":
+                return String.valueOf(sp.getGia());
+            default:
+                return "";
+        }
+    }
+
+    // B2 : lọc dữ liệu thep từ khóa tìm kiếm
+    private void addSearchListener() {
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterTableData();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterTableData();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterTableData();
+            }
+        });
+    }
+
+    private void filterTableData() {
+        String searchText = txtSearch.getText().toLowerCase(); // lấy dữ liệu tìm kiếm từ txtSearch
+        String selectedColumn = (String) jComboBox1.getSelectedItem(); // lấy giá trị đã chọn trong jcombobox1
+        List<SanPham> filteredList = new ArrayList<>();
+
+        for (SanPham sp : listDanhMucSanPham) {
+            String columnValue = getColumnValue(sp, selectedColumn).toLowerCase(); // lấy giá trị của 1 cột cụ thể từ đối tượng ncc
+            if (columnValue.contains(searchText)) {
+                filteredList.add(sp);
+            }
+        }
+
+        updateTableData(filteredList);
+    }
+
+    // B3 : cập nhật dữ liệu cho tbNCC
+    private void updateTableData(List<SanPham> list) {
+        DefaultTableModel model = (DefaultTableModel) tbDanhMucSanPham.getModel();
+        model.setRowCount(0);
+        for (SanPham sp : list) {
+            model.addRow(new Object[]{
+                    sp.getMaMay(), sp.getTenMay(),  sp.getSoLuong(), sp.getGia()
+            });
+        }
+    }
+    //B4 : hiển thị dữ liệu ra table
+    private void setTableNCCData1() {
+        try {
+            listDanhMucSanPham = sanPhamDAO.selectAll();
+            updateTableData(listDanhMucSanPham);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnReset;
     private javax.swing.JButton jButton14;
@@ -508,6 +618,7 @@ public class NhapHang extends javax.swing.JPanel {
     private javax.swing.JButton jButton16;
     private javax.swing.JButton jButton17;
     private javax.swing.JButton jButton18;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<NhaCungCap> jComboBox3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

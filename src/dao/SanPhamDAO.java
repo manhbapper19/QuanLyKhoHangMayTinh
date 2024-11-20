@@ -148,4 +148,20 @@ public class SanPhamDAO implements DAOInterface<SanPham>{
             Logger.getLogger(AccountsDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public boolean exists(String maMay) {
+        String query = "SELECT count(*) FROM maytinh WHERE maMay = ?";
+        try (Connection conn = JDBC.getJDBCConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, maMay);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

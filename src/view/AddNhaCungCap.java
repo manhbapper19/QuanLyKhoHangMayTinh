@@ -3,6 +3,8 @@ package view;
 import dao.NhaCungCapDAO;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import model.NhaCungCap;
 
@@ -32,7 +34,7 @@ public class AddNhaCungCap extends javax.swing.JDialog {
         txtDiaChi = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         btnThemNCC = new javax.swing.JButton();
-        btnClear = new javax.swing.JButton();
+        btnLamMoi = new javax.swing.JButton();
         txtphone1 = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -71,15 +73,15 @@ public class AddNhaCungCap extends javax.swing.JDialog {
             }
         });
 
-        btnClear.setBackground(new java.awt.Color(255, 0, 51));
-        btnClear.setFont(new java.awt.Font("SF Pro Display", 0, 16)); // NOI18N
-        btnClear.setForeground(new java.awt.Color(255, 255, 255));
-        btnClear.setText("Huỷ");
-        btnClear.setBorder(null);
-        btnClear.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnClear.addActionListener(new java.awt.event.ActionListener() {
+        btnLamMoi.setBackground(new java.awt.Color(255, 0, 51));
+        btnLamMoi.setFont(new java.awt.Font("SF Pro Display", 0, 16)); // NOI18N
+        btnLamMoi.setForeground(new java.awt.Color(255, 255, 255));
+        btnLamMoi.setText("Làm mới");
+        btnLamMoi.setBorder(null);
+        btnLamMoi.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLamMoi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnClearActionPerformed(evt);
+                btnLamMoiActionPerformed(evt);
             }
         });
 
@@ -104,7 +106,7 @@ public class AddNhaCungCap extends javax.swing.JDialog {
                         .addGroup(jPanel3Layout.createSequentialGroup()
                             .addComponent(btnThemNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(18, 18, 18)
-                            .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(btnLamMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(51, Short.MAX_VALUE))
         );
@@ -129,7 +131,7 @@ public class AddNhaCungCap extends javax.swing.JDialog {
                 .addComponent(txtDiaChi, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnClear, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnLamMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnThemNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26))
         );
@@ -189,9 +191,70 @@ public class AddNhaCungCap extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    public boolean checkRong() {
+        String specialChars = "[^a-zA-Z0-9 ]";
+        String checkDiaChi = "^[a-zA-Z0-9 ]*\n";
+        Pattern pattern = Pattern.compile(specialChars);
+        Pattern patternDiaChi = Pattern.compile(checkDiaChi);
+        if (txtMaNhaCungCap.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Mã nhà cung cấp không được để trống!");
+            txtMaNhaCungCap.requestFocus();
+            return false;
+        }
+        Matcher matcher = pattern.matcher(txtMaNhaCungCap.getText());
+        if (matcher.find()) {
+            JOptionPane.showMessageDialog(this, "Mã nhà cung cấp không được chứa ký tự đặc biệt!");
+            txtMaNhaCungCap.requestFocus();
+            return false;
+        }
+        if (txtTenNhaCungCap.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Tên nhà cung cấp không được để trống!");
+            txtTenNhaCungCap.requestFocus();
+            return false;
+        }
+        matcher = pattern.matcher(txtTenNhaCungCap.getText());
+        if (matcher.find()) {
+            JOptionPane.showMessageDialog(this, "Tên nhà cung cấp không được chứa ký tự đặc biệt!");
+            txtTenNhaCungCap.requestFocus();
+            return false;
+        }
+        if (txtphone1.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại không được để trống!");
+            txtphone1.requestFocus();
+            return false;
+        }
+        matcher = pattern.matcher(txtphone1.getText());
+        if (matcher.find()) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại không được chứa ký tự đặc biệt!");
+            txtphone1.requestFocus();
+            return false;
+        }
+        if (txtDiaChi.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Địa chỉ không được để trống!");
+            txtDiaChi.requestFocus();
+            return false;
+        }
+        matcher = patternDiaChi.matcher(txtDiaChi.getText());
+        if (matcher.find()) {
+            JOptionPane.showMessageDialog(this, "Địa chỉ không được chứa ký tự đặc biệt!");
+            txtDiaChi.requestFocus();
+            return false;
+        }
+        return true;
+    }
+    
     private void btnThemNCCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemNCCActionPerformed
         // TODO add your handling code here:
+        if(!checkRong()){
+            return;
+        }
+        String maNhaCungCap = txtMaNhaCungCap.getText();
+        if(nhaCungCapDAO.exists(maNhaCungCap)){
+            JOptionPane.showMessageDialog(this, "Mã nhà cung cấp đã tồn tại!");
+            txtMaNhaCungCap.requestFocus();
+            return;
+        }
         NhaCungCap ncc = new NhaCungCap();
         ncc.setMaNhaCungCap(txtMaNhaCungCap.getText());
         ncc.setTenNhaCungCap(txtTenNhaCungCap.getText());
@@ -206,9 +269,12 @@ public class AddNhaCungCap extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_btnThemNCCActionPerformed
 
-    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
-        this.dispose();
-    }//GEN-LAST:event_btnClearActionPerformed
+    private void btnLamMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLamMoiActionPerformed
+        txtMaNhaCungCap.setText("");
+        txtTenNhaCungCap.setText("");
+        txtphone1.setText("");
+        txtDiaChi.setText("");
+    }//GEN-LAST:event_btnLamMoiActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -250,7 +316,7 @@ public class AddNhaCungCap extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnClear;
+    private javax.swing.JButton btnLamMoi;
     private javax.swing.JButton btnThemNCC;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

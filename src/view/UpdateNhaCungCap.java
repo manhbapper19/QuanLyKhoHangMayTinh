@@ -46,7 +46,7 @@ public class UpdateNhaCungCap extends javax.swing.JDialog {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         btnUpdateNCC = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnHuy = new javax.swing.JButton();
         txtphone1 = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -84,15 +84,15 @@ public class UpdateNhaCungCap extends javax.swing.JDialog {
             }
         });
 
-        jButton2.setBackground(new java.awt.Color(255, 0, 51));
-        jButton2.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Huỷ");
-        jButton2.setBorder(null);
-        jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnHuy.setBackground(new java.awt.Color(255, 0, 51));
+        btnHuy.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        btnHuy.setForeground(new java.awt.Color(255, 255, 255));
+        btnHuy.setText("Huỷ");
+        btnHuy.setBorder(null);
+        btnHuy.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnHuy.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnHuyActionPerformed(evt);
             }
         });
 
@@ -117,7 +117,7 @@ public class UpdateNhaCungCap extends javax.swing.JDialog {
                         .addGap(2, 2, 2)
                         .addComponent(btnUpdateNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnHuy, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -142,7 +142,7 @@ public class UpdateNhaCungCap extends javax.swing.JDialog {
                 .addGap(31, 31, 31)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnUpdateNCC, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnHuy, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(31, Short.MAX_VALUE))
         );
 
@@ -189,23 +189,47 @@ public class UpdateNhaCungCap extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnUpdateNCCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateNCCActionPerformed
-        nhaCungCap.setTenNhaCungCap(txtTenNhaCungCap.getText());
-        nhaCungCap.setSdt(txtphone1.getText());
-        nhaCungCap.setDiaChi(txtDiaChi.getText());
-//        System.out.println("Updating NhaCungCap: " + nhaCungCap);
-        if (nhaCungCapDAO.update(nhaCungCap)) {
-            JOptionPane.showMessageDialog(this, "Cập nhật thông tin nhà cung cấp thành công!");
-            nhaCungCapFrm.setTableNCCData();
-            dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "Cập nhật thông tin nhà cung cấp không thành công!");
+        String maNhaCungCap = txtMaNhaCungCap.getText();
+        String tenNhaCungCap = txtTenNhaCungCap.getText();
+        String sdt = txtphone1.getText();
+        String diaChi = txtDiaChi.getText();
+        String regex = "^[a-zA-Z0-9 ]*$";
+        if (tenNhaCungCap.isEmpty() || sdt.isEmpty() || diaChi.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
+            return;
+        }
+        if (!tenNhaCungCap.matches("^[a-zA-Z ]*$")) {
+            JOptionPane.showMessageDialog(this, "Tên nhà cung cấp không hợp lệ!");
+            return;
+        }
+        if (!sdt.matches("0[0-9]{9,10}")) {
+            JOptionPane.showMessageDialog(this, "Số điện thoại không hợp lệ!");
+            return;
+        }
+        if (!diaChi.matches(regex)) {
+            JOptionPane.showMessageDialog(this, "Địa chỉ không hợp lệ!");
+            return;
+        }
+        try {
+            nhaCungCap.setTenNhaCungCap(tenNhaCungCap);
+            nhaCungCap.setSdt(sdt);
+            nhaCungCap.setDiaChi(diaChi);
+            if (nhaCungCapDAO.update(nhaCungCap)) {
+                JOptionPane.showMessageDialog(this, "Cập nhật thông tin nhà cung cấp thành công!");
+                nhaCungCapFrm.setTableNCCData();
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Cập nhật thông tin nhà cung cấp không thành công!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }//GEN-LAST:event_btnUpdateNCCActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
         // TODO add your handling code here:
         this.dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnHuyActionPerformed
 
     /**
      * @param args the command line arguments
@@ -250,8 +274,8 @@ public class UpdateNhaCungCap extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnHuy;
     private javax.swing.JButton btnUpdateNCC;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

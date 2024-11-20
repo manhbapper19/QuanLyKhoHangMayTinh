@@ -281,20 +281,36 @@ public class UpdateSanPham extends javax.swing.JDialog {
 
     private void btnUpdateSanPhamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateSanPhamActionPerformed
         // TODO add your handling code here:
-        sanPham.setTenMay(txtTenMay.getText());
-        sanPham.setTenCpu(txtTenCPU.getText());
-        sanPham.setRam(txtRAM.getText());
-        sanPham.setRom(txtROM.getText());
-        sanPham.setSoLuong(Integer.parseInt(txtSoLuong.getText()));
-        sanPham.setGia(Double.parseDouble(txtGia.getText()));
-        sanPham.setLoaiMay(jComboBox1.getSelectedItem().toString());
-
-        if (sanPhamDAO.update(sanPham)) {
-            JOptionPane.showMessageDialog(this, "Cập nhật thông tin sản phẩm thành công!");
-            sanPhamFrm.setTableSanPhamData();
-            dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, "Cập nhật thông tin sản phẩm không thành công!");
+        String tenMay = txtTenMay.getText();
+        String tenCPU = txtTenCPU.getText();
+        String ram = txtRAM.getText();
+        String rom = txtROM.getText();
+        String soLuongStr = txtSoLuong.getText();
+        String giaStr = txtGia.getText();
+        String regex = "^[a-zA-Z0-9 ]*$";
+        if (!tenMay.matches(regex) || !tenCPU.matches(regex) || !ram.matches(regex) || !rom.matches(regex)) {
+            JOptionPane.showMessageDialog(this, "Các mục text không được chứa ký tự đặc biệt!");
+            return;
+        }
+        try {
+            int soLuong = Integer.parseInt(soLuongStr);
+            double gia = Double.parseDouble(giaStr);
+            sanPham.setTenMay(tenMay);
+            sanPham.setTenCpu(tenCPU);
+            sanPham.setRam(ram);
+            sanPham.setRom(rom);
+            sanPham.setSoLuong(soLuong);
+            sanPham.setGia(gia);
+            sanPham.setLoaiMay(jComboBox1.getSelectedItem().toString());
+            if (sanPhamDAO.update(sanPham)) {
+                JOptionPane.showMessageDialog(this, "Cập nhật thông tin sản phẩm thành công!");
+                sanPhamFrm.setTableSanPhamData();
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Cập nhật thông tin sản phẩm không thành công!");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Giá và số lượng phải là chữ số!");
         }
     }//GEN-LAST:event_btnUpdateSanPhamActionPerformed
 

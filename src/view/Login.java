@@ -93,6 +93,11 @@ public class Login extends javax.swing.JDialog {
 
         jButton3.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         jButton3.setText("Quên Mật Khẩu");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jLabel4.setForeground(new java.awt.Color(255, 0, 0));
 
@@ -187,7 +192,7 @@ public class Login extends javax.swing.JDialog {
 //            new HomeFrm().setVisible(true);
         if(login != null){
             this.dispose();
-            new HomeFrm(login.getUserName(),login.getId(),login.getRole()).setVisible(true);
+            new HomeFrm(login).setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Sai tên đăng nhập hoặc mật khẩu!");
         }
@@ -250,6 +255,10 @@ public class Login extends javax.swing.JDialog {
             }
         }, 500); // Add a delay of 500ms
     }//GEN-LAST:event_txtPasswordKeyPressed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:    
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments

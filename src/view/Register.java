@@ -231,7 +231,6 @@ public class Register extends javax.swing.JDialog {
     }//GEN-LAST:event_btnLamMoiActionPerformed
 
     private void btnDangKyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangKyActionPerformed
-        // TODO add your handling code here:
         if(accountsDAO.checkRong(txtUserName, txtFullName, txtMatKhau, txtXacNhanMK, txtEmail, txtPhone)){
             String userName = txtUserName.getText();
             String fullName = txtFullName.getText();
@@ -241,6 +240,10 @@ public class Register extends javax.swing.JDialog {
             String phone = txtPhone.getText();
             if (accountsDAO.checkUsername(userName)) {
                 JOptionPane.showMessageDialog(rootPane, "Username đã tồn tại!");
+                return;
+            }
+            if (!accountsDAO.checkUserName(userName)) {
+                JOptionPane.showMessageDialog(rootPane, "Username không hợp lệ!");
                 return;
             }
             if (!accountsDAO.checkPassword(matKhau)) {

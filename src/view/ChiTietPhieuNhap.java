@@ -4,6 +4,22 @@
  */
 package view;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import dao.Dto.ChitietPhieuNhapDto;
+import dao.PhieuNhapDAO;
+import model.PhieuNhap;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Locale;
+
 /**
  *
  * @author huy
@@ -13,9 +29,16 @@ public class ChiTietPhieuNhap extends javax.swing.JDialog {
     /**
      * Creates new form ChiTietPhieuNhao
      */
-    public ChiTietPhieuNhap(java.awt.Frame parent, boolean modal) {
+    private String maPhieu;
+    private PhieuNhapDAO phieuNhapDAO = new PhieuNhapDAO();
+    private  NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+    public ChiTietPhieuNhap(java.awt.Frame parent, boolean modal,String maPhieu) {
         super(parent, modal);
+        this.maPhieu =maPhieu;
         initComponents();
+        setPhieuDetail();
+        SetTable();
+
     }
 
     /**
@@ -175,9 +198,80 @@ public class ChiTietPhieuNhap extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    private void setPhieuDetail(){
+        PhieuNhap phieuNhap = phieuNhapDAO.findById(maPhieu);
+        labelMaPhieu.setText(phieuNhap.getMaPhieu());
+        labelNguoiTao.setText(phieuNhap.getNguoiTao());
+        labelNhaCungCap.setText(phieuNhap.getNhaCungCap());
+        labelThoiGianTao.setText(phieuNhap.getThoiGianTao().toString());
+        labelTongTien.setText(currencyFormat.format(phieuNhap.getTongTien()));
+    }
+    private void SetTable(){
+        DefaultTableModel model = (DefaultTableModel) tblChiTietPhieu.getModel();
+        model.setRowCount(0);
+        ArrayList<ChitietPhieuNhapDto> list = phieuNhapDAO.getListCtpn(maPhieu);
+        for (int i = 0; i < list.size(); i++) {
+            model.addRow(new Object[]{
+                i+1,
+                list.get(i).getMaMay(),
+                list.get(i).getTenSanPham(),
+                list.get(i).getSoLuong(),
+                currencyFormat.format(list.get(i).getDonGia()),
+                currencyFormat.format(list.get(i).getDonGia()*list.get(i).getSoLuong())
+            });
+        }
+    }
 
+    public void export(String path) {
+        try {
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream(path));
+            document.open();
+
+            // Add content to the PDF
+            document.add(new Paragraph("Chi Tiet Phieu Nhap"));
+            document.add(new Paragraph("Ma phieu: " + labelMaPhieu.getText()));
+            document.add(new Paragraph("Nha cung cap: " + labelNhaCungCap.getText()));
+            document.add(new Paragraph("Nguoi tao: " + labelNguoiTao.getText()));
+            document.add(new Paragraph("Thoi gian tao: " + labelThoiGianTao.getText()));
+            document.add(new Paragraph("\n"));
+
+            // Define column headers
+            String[] columnHeaders = {"STT", "Ma may", "Ten may", "So luong", "Don gia", "Thanh tien"};
+
+            // Add table to the PDF
+            PdfPTable table = new PdfPTable(columnHeaders.length);
+            for (String header : columnHeaders) {
+                table.addCell(header);
+            }
+
+            // Add data rows to the table
+            for (int i = 0; i < tblChiTietPhieu.getRowCount(); i++) {
+                for (int j = 0; j < tblChiTietPhieu.getColumnCount(); j++) {
+                    table.addCell(tblChiTietPhieu.getValueAt(i, j).toString());
+                }
+            }
+            document.add(table);
+            document.add(new Paragraph("\n"));
+            document.add(new Paragraph("Tong tien: " + labelTongTien.getText()));
+
+            // Close the document
+            document.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     private void exportPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPDFActionPerformed
         // TODO add your handling code here:
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Specify a file to save");
+        fileChooser.setSelectedFile(new File(maPhieu + ".pdf"));
+        int userSelection = fileChooser.showSaveDialog(this);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            export(fileToSave.getAbsolutePath());
+        }
+
     }//GEN-LAST:event_exportPDFActionPerformed
 
     /**
@@ -209,18 +303,18 @@ public class ChiTietPhieuNhap extends javax.swing.JDialog {
         //</editor-fold>
 
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                ChiTietPhieuNhap dialog = new ChiTietPhieuNhap(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                ChiTietPhieuNhap dialog = new ChiTietPhieuNhap(new javax.swing.JFrame(), true);
+//                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+//                    @Override
+//                    public void windowClosing(java.awt.event.WindowEvent e) {
+//                        System.exit(0);
+//                    }
+//                });
+//                dialog.setVisible(true);
+//            }
+//        });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

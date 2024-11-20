@@ -6,6 +6,7 @@ import model.Account;
 import model.Phieu;
 
 import java.sql.*;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -100,40 +101,90 @@ public class ThongKeDao {
             throw new RuntimeException(e);
         }
     }
-    public HashMap<String, Double> getNhapData() {
-        HashMap<String, Double> data = new HashMap<>();
-        String query = "SELECT\n" +
-                "    CONCAT(MONTH(thoiGianTao), '/', YEAR(thoiGianTao)) as month_year,\n" +
-                "    SUM(tongTien) as total\n" +
-                "FROM phieunhap\n" +
-                "GROUP BY CONCAT(MONTH(thoiGianTao), '/', YEAR(thoiGianTao))";
-        try {
-            PreparedStatement ps = conn.prepareStatement(query);
-            rs = ps.executeQuery();
-            while (rs.next()) {
-                data.put(rs.getString("month_year"), rs.getDouble("total"));
+
+
+
+
+        public Map<YearMonth, Double> getNhapData() {
+            Map<YearMonth, Double> data = new HashMap<>();
+            String query = "SELECT \n" +
+                    "    YEAR(thoiGianTao) AS year, \n" +
+                    "    MONTH(thoiGianTao) AS month, \n" +
+                    "    SUM(tongTien) AS total\n" +
+                    "FROM phieunhap\n" +
+                    "WHERE thoiGianTao >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)\n" +
+                    "GROUP BY year, month";
+            try {
+                PreparedStatement ps = conn.prepareStatement(query);
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    YearMonth yearMonth = YearMonth.of(rs.getInt("year"), rs.getInt("month"));
+                    data.put(yearMonth, rs.getDouble("total"));
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
+            return data;
+        }
+
+        public Map<YearMonth, Double> getXuatData() {
+            Map<YearMonth, Double> data = new HashMap<>();
+            String query = "SELECT \n" +
+                    "    YEAR(thoiGianTao) AS year, \n" +
+                    "    MONTH(thoiGianTao) AS month, \n" +
+                    "    SUM(tongTien) AS total\n" +
+                    "FROM phieuxuat\n" +
+                    "WHERE thoiGianTao >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)\n" +
+                    "GROUP BY year, month";
+            try {
+                PreparedStatement ps = conn.prepareStatement(query);
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    YearMonth yearMonth = YearMonth.of(rs.getInt("year"), rs.getInt("month"));
+                    data.put(yearMonth, rs.getDouble("total"));
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            return data;
+        }
+    public  int countProduct(){
+        var query ="select count(*) as count from maytinh where trangThai = 1";
+        try {
+            PreparedStatement ps= conn.prepareStatement(query);
+            rs = ps.executeQuery();
+            if (rs.next()){
+                return rs.getInt("count");
+            }
+            return 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return data;
     }
-    public HashMap<String, Double> getXuatData() {
-        HashMap<String, Double> data = new HashMap<>();
-        String query = "SELECT\n" +
-                "    CONCAT(MONTH(thoiGianTao), '/', YEAR(thoiGianTao)) as month_year,\n" +
-                "    SUM(tongTien) as total\n" +
-                "FROM phieuxuat\n" +
-                "GROUP BY CONCAT(MONTH(thoiGianTao), '/', YEAR(thoiGianTao))";
+    public  int countProvider(){
+        var query ="select count(*) as count from nhacungcap";
         try {
-            PreparedStatement ps = conn.prepareStatement(query);
+            PreparedStatement ps= conn.prepareStatement(query);
             rs = ps.executeQuery();
-            while (rs.next()) {
-                data.put(rs.getString("month_year"), rs.getDouble("total"));
+            if (rs.next()){
+                return rs.getInt("count");
             }
+            return 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return data;
+    }
+    public int countAccount(){
+        var query ="select count(*) as count from account";
+        try {
+            PreparedStatement ps= conn.prepareStatement(query);
+            rs = ps.executeQuery();
+            if (rs.next()){
+                return rs.getInt("count");
+            }
+            return 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

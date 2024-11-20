@@ -312,7 +312,7 @@ public class XuatHangDao {
         }
         return false;
     }
-    public boolean xoaPhieuNhap(String id){
+    public boolean xoaPhieuXuat(String id){
         var query = "select * from chitietphieuxuat where maPhieu = ?";
         try {
             conn.setAutoCommit(false);
@@ -328,7 +328,7 @@ public class XuatHangDao {
                 conn.rollback();
                 return false;
             }
-            var query2 = "delete from phieunhap where maPhieu = ?";
+            var query2 = "delete from phieuxuat where maPhieu = ?";
             PreparedStatement ps2 = conn.prepareStatement(query2);
             ps2.setString(1, id);
             if(ps2.executeUpdate() > 0){

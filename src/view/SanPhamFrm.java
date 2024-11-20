@@ -5,13 +5,23 @@ import model.SanPham;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 public class SanPhamFrm extends javax.swing.JPanel implements ActionListener{
@@ -204,9 +214,19 @@ public class SanPhamFrm extends javax.swing.JPanel implements ActionListener{
 
         btnNhapExcelSP.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_add_file_25px_2.png"))); // NOI18N
         btnNhapExcelSP.setText("Nhập Excel");
+        btnNhapExcelSP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNhapExcelSPActionPerformed(evt);
+            }
+        });
 
         btnXuatExcelSP.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8-microsoft-excel-2019-25.png"))); // NOI18N
         btnXuatExcelSP.setText("Xuất Excel");
+        btnXuatExcelSP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXuatExcelSPActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -341,6 +361,129 @@ public class SanPhamFrm extends javax.swing.JPanel implements ActionListener{
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnNhapExcelSPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNhapExcelSPActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        int returnValue = fileChooser.showOpenDialog(this);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            readExcelFile(selectedFile);
+        }
+    }//GEN-LAST:event_btnNhapExcelSPActionPerformed
+    private void readExcelFile(File file) {
+        List<SanPham> existingProducts = new ArrayList<>();
+        try (FileInputStream fis = new FileInputStream(file);
+             XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            DefaultTableModel model = (DefaultTableModel) tbSanPham.getModel();
+            model.setRowCount(0); // Clear existing data
+
+            List<SanPham> newProducts = new ArrayList<>();
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                XSSFRow row = sheet.getRow(i);
+                SanPham sp = new SanPham(
+                    row.getCell(0).getStringCellValue(),
+                    row.getCell(1).getStringCellValue(),
+                    (int) row.getCell(2).getNumericCellValue(),
+                    row.getCell(3).getStringCellValue(),
+                    row.getCell(4).getStringCellValue(),
+                    row.getCell(5).getNumericCellValue(),
+                    row.getCell(6).getStringCellValue(),
+                    row.getCell(7).getStringCellValue(),
+                    1
+                );
+
+                if (!sanPhamDAO.exists(sp.getMaMay())) {
+                    sanPhamDAO.insert(sp);
+                    newProducts.add(sp);
+                }else {
+                    existingProducts.add(sp);
+                }
+            }
+
+            for (SanPham sp : newProducts) {
+                model.addRow(new Object[]{
+                    sp.getMaMay(), sp.getTenMay(), sp.getSoLuong(), sp.getTenCpu(),
+                    sp.getRam(), sp.getGia(), sp.getLoaiMay(), sp.getRom()
+                });
+            }
+            if (!existingProducts.isEmpty()) {
+                StringBuilder message = new StringBuilder("Các sản phẩm sau đã có trong SQL:\n");
+                for (SanPham sp : existingProducts) {
+                    message.append(sp.getMaMay()).append(" - ").append(sp.getTenMay()).append("\n");
+                }
+                JOptionPane.showMessageDialog(this, message.toString(), "Existing Products", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error reading Excel file: " + e.getMessage());
+        }
+    }
+    private void btnXuatExcelSPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXuatExcelSPActionPerformed
+        // TODO add your handling code here:
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Save Excel File");
+        int userSelection = fileChooser.showSaveDialog(this);
+
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            if (!fileToSave.getAbsolutePath().endsWith(".xlsx")) {
+                fileToSave = new File(fileToSave.getAbsolutePath() + ".xlsx");
+            }
+            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+                XSSFSheet sheet = workbook.createSheet("Danh sach san pham");
+                XSSFRow row = sheet.createRow(0);
+                Cell cell = row.createCell(0, CellType.STRING);
+                cell.setCellValue("Ma may");
+                cell = row.createCell(1, CellType.STRING);
+                cell.setCellValue("Ten may");
+                cell = row.createCell(2, CellType.STRING);
+                cell.setCellValue("So luong");
+                cell = row.createCell(3, CellType.STRING);
+                cell.setCellValue("Ten CPU");
+                cell = row.createCell(4, CellType.STRING);
+                cell.setCellValue("RAM");
+                cell = row.createCell(5, CellType.STRING);
+                cell.setCellValue("Gia");
+                cell = row.createCell(6, CellType.STRING);
+                cell.setCellValue("Loai may");
+                cell = row.createCell(7, CellType.STRING);
+                cell.setCellValue("ROM");
+                cell = row.createCell(8, CellType.STRING);
+                cell.setCellValue("Trang thai");
+
+                for (int i = 0; i < listSanPham.size(); i++) {
+                    row = sheet.createRow(i + 1);
+                    cell = row.createCell(0, CellType.STRING);
+                    cell.setCellValue(listSanPham.get(i).getMaMay());
+                    cell = row.createCell(1, CellType.STRING);
+                    cell.setCellValue(listSanPham.get(i).getTenMay());
+                    cell = row.createCell(2, CellType.NUMERIC);
+                    cell.setCellValue(listSanPham.get(i).getSoLuong());
+                    cell = row.createCell(3, CellType.STRING);
+                    cell.setCellValue(listSanPham.get(i).getTenCpu());
+                    cell = row.createCell(4, CellType.STRING);
+                    cell.setCellValue(listSanPham.get(i).getRam());
+                    cell = row.createCell(5, CellType.NUMERIC);
+                    cell.setCellValue(listSanPham.get(i).getGia());
+                    cell = row.createCell(6, CellType.STRING);
+                    cell.setCellValue(listSanPham.get(i).getLoaiMay());
+                    cell = row.createCell(7, CellType.STRING);
+                    cell.setCellValue(listSanPham.get(i).getRom());
+                    cell = row.createCell(8, CellType.STRING);
+                    cell.setCellValue(listSanPham.get(i).getTrangThai());
+                }
+
+                try (FileOutputStream out = new FileOutputStream(fileToSave)) {
+                    workbook.write(out);
+                }
+                JOptionPane.showMessageDialog(this, "Xuất Excel thành công!");
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error writing Excel file: " + e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_btnXuatExcelSPActionPerformed
 
 
 

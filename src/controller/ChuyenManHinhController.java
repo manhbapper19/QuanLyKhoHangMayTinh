@@ -3,6 +3,7 @@ package controller;
 import bean.DanhMucBean;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.List;
@@ -11,6 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+
+import dao.Dto.UserDetail;
 import org.w3c.dom.Node;
 import view.MainFrm;
 import view.NhaCungCapFrm;
@@ -22,22 +25,21 @@ import view.TaiKhoanFrm;
 import view.ThongKe;
 import view.TonKho;
 import view.XuatHang;
+import view.UpdateThongTin;
 
 /**
  *
  * @author ASUS
  */
 public class ChuyenManHinhController {
-    private String username;
-    private String userId;
+    private UserDetail userDetail;
     private JPanel root;
     private String kindSelected = "";
     private List<DanhMucBean> listItem = null;
 
-    public ChuyenManHinhController(JPanel jpnRoot, String username, String userId) {
+    public ChuyenManHinhController(JPanel jpnRoot, UserDetail userDetail) {
         this.root = jpnRoot;
-        this.username = username;
-        this.userId = userId;
+        this.userDetail = userDetail;
     }
 
     public void setView(JPanel jpnItem, JLabel jlbItem) {
@@ -82,13 +84,13 @@ public class ChuyenManHinhController {
                     node = new NhaCungCapFrm();
                     break;
                 case "NhapHang":
-                    node = new NhapHang();
+                    node = new NhapHang(userDetail.getUserName(), userDetail.getId());
                     break;
                 case "PhieuNhap":
                     node = new PhieuNhap();
                     break;
                 case "XuatHang":
-                    node = new XuatHang(username, userId);
+                    node = new XuatHang(userDetail.getUserName(), userDetail.getId());
                     break;
                 case "PhieuXuat":
                     node = new PhieuXuat();
@@ -102,6 +104,10 @@ public class ChuyenManHinhController {
                 case "ThongKe":
                     node = new ThongKe();
                     break;
+                case "DoiThongTin":
+                    Dialog updateDialog = new UpdateThongTin((JFrame) SwingUtilities.getWindowAncestor(root), true, userDetail.getUserName(), userDetail.getId(),userDetail.getEmail());
+                    updateDialog.setVisible(true);
+                    return;
                 case "DangXuat" :
                    int confirm = JOptionPane.showConfirmDialog(root, "Bạn có chắc chắn muốn đăng xuất?", "Xác nhận đăng xuất", JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {

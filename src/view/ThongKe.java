@@ -12,6 +12,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.sql.Timestamp;
 import java.text.NumberFormat;
+import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -45,6 +46,7 @@ public class ThongKe extends javax.swing.JPanel {
     private ThongKeDao thongKeDao = new ThongKeDao();
         public ThongKe() {
         initComponents();
+        set();
         setPdtbl();
         setTbPhieu();
         setTblAccount();
@@ -106,11 +108,16 @@ public class ThongKe extends javax.swing.JPanel {
 //        jPanel3.revalidate();
 //        jPanel3.repaint();
 //    }
+    private void set(){
+        txtQuantityProduct.setText(String.valueOf(thongKeDao.countProduct()));
+        txtQuantityNcc.setText(String.valueOf(thongKeDao.countProvider()));
+        txtQuantityUser.setText(String.valueOf(thongKeDao.countAccount()));
+    }
 public void SetGraphXuat() {
     // Tạo dataset
     DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-    HashMap<String, Double> data = thongKeDao.getNhapData();
-    for (HashMap.Entry<String, Double> entry : data.entrySet()) {
+    Map<YearMonth, Double> data = thongKeDao.getNhapData();
+    for (Map.Entry<YearMonth, Double> entry : data.entrySet()) {
         dataset.addValue(entry.getValue(), "Nhập", entry.getKey());
     }
 
@@ -195,8 +202,8 @@ public void SetGraphXuat() {
     public void SetGraphNhap() {
         // Tạo dataset
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        HashMap<String, Double> data = thongKeDao.getXuatData();
-        for (HashMap.Entry<String, Double> entry : data.entrySet()) {
+        Map<YearMonth, Double> data = thongKeDao.getXuatData();
+        for (Map.Entry<YearMonth, Double> entry : data.entrySet()) {
             dataset.addValue(entry.getValue(), "Nhập", entry.getKey());
         }
 

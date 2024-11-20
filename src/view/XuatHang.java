@@ -18,6 +18,9 @@ import javax.swing.table.DefaultTableModel;
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -50,6 +53,9 @@ public class XuatHang extends javax.swing.JPanel {
         PdTB.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         ctpnTb.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setTableDanhMucSanPham();
+        setComboboxData();
+        setTableNCCData1();
+        addSearchListener();
     }
     private void setPhieuXuat(){
         phieuXuat = new PhieuXuat();
@@ -104,8 +110,9 @@ public class XuatHang extends javax.swing.JPanel {
         jScrollPane6 = new javax.swing.JScrollPane();
         PdTB = new javax.swing.JTable();
         jPanel25 = new javax.swing.JPanel();
-        jTextField12 = new javax.swing.JTextField();
+        txtSearch = new javax.swing.JTextField();
         jButton25 = new javax.swing.JButton();
+        jComboBox1 = new javax.swing.JComboBox<>();
         jLabel11 = new javax.swing.JLabel();
         quantityTxt = new javax.swing.JTextField();
         addbtn = new javax.swing.JButton();
@@ -149,25 +156,30 @@ public class XuatHang extends javax.swing.JPanel {
         jButton25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/icons8_reset_25px_1.png"))); // NOI18N
         jButton25.setText("Làm mới");
 
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout jPanel25Layout = new javax.swing.GroupLayout(jPanel25);
         jPanel25.setLayout(jPanel25Layout);
         jPanel25Layout.setHorizontalGroup(
             jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel25Layout.createSequentialGroup()
-                .addGap(36, 36, 36)
-                .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 78, Short.MAX_VALUE)
+                .addGap(14, 14, 14)
+                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(45, 45, 45)
                 .addComponent(jButton25, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(47, 47, 47))
+                .addGap(18, 18, 18))
         );
         jPanel25Layout.setVerticalGroup(
             jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel25Layout.createSequentialGroup()
-                .addGap(34, 34, 34)
+                .addGap(33, 33, 33)
                 .addGroup(jPanel25Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton25, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(107, Short.MAX_VALUE))
+                    .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton25, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         jLabel11.setText("Số lượng :");
@@ -185,7 +197,7 @@ public class XuatHang extends javax.swing.JPanel {
         jPanel24.setLayout(jPanel24Layout);
         jPanel24Layout.setHorizontalGroup(
             jPanel24Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane6)
+            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
             .addGroup(jPanel24Layout.createSequentialGroup()
                 .addGap(49, 49, 49)
                 .addComponent(jLabel11)
@@ -199,9 +211,9 @@ public class XuatHang extends javax.swing.JPanel {
         jPanel24Layout.setVerticalGroup(
             jPanel24Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel24Layout.createSequentialGroup()
-                .addComponent(jPanel25, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(10, 10, 10)
-                .addComponent(jScrollPane6)
+                .addComponent(jPanel25, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 499, Short.MAX_VALUE)
                 .addGap(57, 57, 57)
                 .addGroup(jPanel24Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -243,7 +255,7 @@ public class XuatHang extends javax.swing.JPanel {
 
         jLabel16.setText("0đ");
 
-        xuatBtn.setText("Nhập hàng");
+        xuatBtn.setText("Xuất hàng");
         xuatBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 xuatBtnActionPerformed(evt);
@@ -508,6 +520,99 @@ public class XuatHang extends javax.swing.JPanel {
         }
     }
 
+    /* hiển thị dữ liệu ra combobox */
+
+    // B1 : lấy tên các cột trong table truyền vào list
+    private List<String> getColumnNames() {
+        List<String> columnNames = new ArrayList<>();
+        for (int i = 0; i < PdTB.getColumnCount(); i++) {
+            columnNames.add(PdTB.getColumnName(i));
+        }
+        return columnNames;
+    }
+
+    // B2 : truyền dữ liệu từ list vào combobox
+    private void setComboboxData() {
+        List<String> columnNames = getColumnNames();
+        jComboBox1.removeAllItems();
+        for (String columnName : columnNames) {
+            jComboBox1.addItem(columnName);
+        }
+    }
+
+    /* hiển thị dữ liệu ra table dựa vào từ khóa tìm kiếm theo cột */
+
+    // B1 : lấy giá trị của cột tương ứng cho 1 nhà cung cấp cụ thể
+    private String getColumnValue(SanPham sp, String columnName) {
+        switch (columnName) {
+            case "Mã máy":
+                return sp.getMaMay();
+            case "Tên máy":
+                return sp.getTenMay();
+            case "Số lượng":
+                return String.valueOf(sp.getSoLuong());
+            case "Đơn giá":
+                return String.valueOf(sp.getGia());
+            default:
+                return "";
+        }
+    }
+
+    // B2 : lọc dữ liệu thep từ khóa tìm kiếm
+    private void addSearchListener() {
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterTableData();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterTableData();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterTableData();
+            }
+        });
+    }
+
+    private void filterTableData() {
+        String searchText = txtSearch.getText().toLowerCase(); // lấy dữ liệu tìm kiếm từ txtSearch
+        String selectedColumn = (String) jComboBox1.getSelectedItem(); // lấy giá trị đã chọn trong jcombobox1
+        List<SanPham> filteredList = new ArrayList<>();
+
+        for (SanPham sp : listDanhMucSanPham) {
+            String columnValue = getColumnValue(sp, selectedColumn).toLowerCase(); // lấy giá trị của 1 cột cụ thể từ đối tượng ncc
+            if (columnValue.contains(searchText)) {
+                filteredList.add(sp);
+            }
+        }
+
+        updateTableData(filteredList);
+    }
+
+    // B3 : cập nhật dữ liệu cho tbNCC
+    private void updateTableData(List<SanPham> list) {
+        DefaultTableModel model = (DefaultTableModel) PdTB.getModel();
+        model.setRowCount(0);
+        for (SanPham sp : list) {
+            model.addRow(new Object[]{
+                    sp.getMaMay(), sp.getTenMay(),  sp.getSoLuong(), sp.getGia()
+            });
+        }
+    }
+    //B4 : hiển thị dữ liệu ra table
+    private void setTableNCCData1() {
+        try {
+            listDanhMucSanPham = sanPhamDAO.selectAll();
+            updateTableData(listDanhMucSanPham);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable PdTB;
     private javax.swing.JButton addbtn;
@@ -516,6 +621,7 @@ public class XuatHang extends javax.swing.JPanel {
     private javax.swing.JTextField idTxt;
     private javax.swing.JButton jButton25;
     private javax.swing.JButton jButton28;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
@@ -527,9 +633,9 @@ public class XuatHang extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel26;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
-    private javax.swing.JTextField jTextField12;
     private javax.swing.JButton qtyChangebtn;
     private javax.swing.JTextField quantityTxt;
+    private javax.swing.JTextField txtSearch;
     private javax.swing.JTextField userTxt;
     private javax.swing.JButton xuatBtn;
     // End of variables declaration//GEN-END:variables

@@ -2,6 +2,8 @@ package view;
 
 import dao.SanPhamDAO;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import model.SanPham;
 import javax.swing.*;
 
@@ -226,26 +228,113 @@ public class AddSanPham extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    public boolean checkRong() {
+    String specialChars = "[^a-zA-Z0-9 ]";
+    Pattern pattern = Pattern.compile(specialChars);
 
+    if (txtMaMay.getText().equals("")) {
+        JOptionPane.showMessageDialog(this, "Mã máy không được để trống!");
+        txtMaMay.requestFocus();
+        return false;
+    }
+    Matcher matcher = pattern.matcher(txtMaMay.getText());
+    if (matcher.find()) {
+        JOptionPane.showMessageDialog(this, "Mã máy không được chứa ký tự đặc biệt!");
+        txtMaMay.requestFocus();
+        return false;
+    }
+    if (txtTenMay.getText().equals("")) {
+        JOptionPane.showMessageDialog(this, "Tên máy không được để trống!");
+        txtTenMay.requestFocus();
+        return false;
+    }
+    matcher = pattern.matcher(txtTenMay.getText());
+    if (matcher.find()) {
+        JOptionPane.showMessageDialog(this, "Tên máy không được chứa ký tự đặc biệt!");
+        txtTenMay.requestFocus();
+        return false;
+    }
+    if (txtTenCPU.getText().equals("")) {
+        JOptionPane.showMessageDialog(this, "Tên CPU không được để trống!");
+        txtTenCPU.requestFocus();
+        return false;
+    }
+    matcher = pattern.matcher(txtTenCPU.getText());
+    if (matcher.find()) {
+        JOptionPane.showMessageDialog(this, "Tên CPU không được chứa ký tự đặc biệt!");
+        txtTenCPU.requestFocus();
+        return false;
+    }
+    if (txtRAM.getText().equals("")) {
+        JOptionPane.showMessageDialog(this, "RAM không được để trống!");
+        txtRAM.requestFocus();
+        return false;
+    }
+    matcher = pattern.matcher(txtRAM.getText());
+    if (matcher.find()) {
+        JOptionPane.showMessageDialog(this, "RAM không được chứa ký tự đặc biệt!");
+        txtRAM.requestFocus();
+        return false;
+    }
+    if (txtROM.getText().equals("")) {
+        JOptionPane.showMessageDialog(this, "ROM không được để trống!");
+        txtROM.requestFocus();
+        return false;
+    }
+    matcher = pattern.matcher(txtROM.getText());
+    if (matcher.find()) {
+        JOptionPane.showMessageDialog(this, "ROM không được chứa ký tự đặc biệt!");
+        txtROM.requestFocus();
+        return false;
+    }
+    if (txtSoLuong.getText().equals("")) {
+        JOptionPane.showMessageDialog(this, "Số lượng không được để trống!");
+        txtSoLuong.requestFocus();
+        return false;
+    }
+    if (txtGia.getText().equals("")) {
+        JOptionPane.showMessageDialog(this, "Giá không được để trống!");
+        txtGia.requestFocus();
+        return false;
+    }
+    return true;
+}
     // xử lý nút thêm sản phẩm
     private void btnThemSanPhamActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemSanPhamActionPerformed
-        SanPham sp = new SanPham();
-        sp.setMaMay(txtMaMay.getText());
-        sp.setTenMay(txtTenMay.getText());
-        sp.setTenCpu(txtTenCPU.getText());
-        sp.setRam(txtRAM.getText());
-        sp.setRom(txtROM.getText());
-        sp.setSoLuong(Integer.parseInt(txtSoLuong.getText()));
-        sp.setGia(Double.parseDouble(txtGia.getText()));
-        sp.setLoaiMay(jComboBox1.getSelectedItem().toString());
-        sp.setTrangThai(1);
-        if (sanPhamDAO.insert(sp)) {
-            JOptionPane.showMessageDialog(this, "Đã thêm thông tin sản phẩm thành công!");
-            sanPhamFrm.setTableSanPhamData();
-            dispose();
-        } else {
-            
-            JOptionPane.showMessageDialog(this, "Thêm thông tín sản phẩm không thành công!");
+        if (!checkRong()) {
+            return;
+        }
+        String maMay = txtMaMay.getText();
+        if (sanPhamDAO.exists(maMay)) {
+            JOptionPane.showMessageDialog(this, "Mã máy đã tồn tại!");
+            txtMaMay.requestFocus();
+            return;
+        }
+        
+        try {
+            int soLuong = Integer.parseInt(txtSoLuong.getText());
+            double gia = Double.parseDouble(txtGia.getText());
+
+            SanPham sp = new SanPham();
+            sp.setMaMay(txtMaMay.getText());
+            sp.setTenMay(txtTenMay.getText());
+            sp.setTenCpu(txtTenCPU.getText());
+            sp.setRam(txtRAM.getText());
+            sp.setRom(txtROM.getText());
+            sp.setSoLuong(soLuong);
+            sp.setGia(gia);
+            sp.setLoaiMay(jComboBox1.getSelectedItem().toString());
+            sp.setTrangThai(1);
+
+            if (sanPhamDAO.insert(sp)) {
+                JOptionPane.showMessageDialog(this, "Đã thêm thông tin sản phẩm thành công!");
+                sanPhamFrm.setTableSanPhamData();
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Thêm thông tin sản phẩm không thành công!");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Số lượng và giá phải là số hợp lệ!");
         }
 
     }//GEN-LAST:event_btnThemSanPhamActionPerformed

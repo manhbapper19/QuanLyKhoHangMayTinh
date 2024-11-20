@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.*;
 import model.NhaCungCap;
 
 public class NhaCungCapDAO implements DAOInterface<NhaCungCap>{
@@ -83,5 +84,20 @@ public class NhaCungCapDAO implements DAOInterface<NhaCungCap>{
     public NhaCungCap selectById(String t) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-
+    
+    public boolean exists(String maNhaCungCap) {
+        String query = "SELECT count(*) FROM nhacungcap WHERE maNhaCungCap = ?";
+        try (Connection conn = JDBC.getJDBCConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, maNhaCungCap);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
